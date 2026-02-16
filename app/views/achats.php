@@ -1,102 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Gestion des Achats</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #f4f4f4; }
-        form { margin-bottom: 30px; }
-        .section { margin-bottom: 50px; }
-    </style>
-</head>
-<body>
+<h3>Total Argent Disponible: <?= number_format($totalArgent,2) ?> MGA</h3>
 
-<h2>Achat via dons en ARGENT</h2>
+<h4>Effectuer un achat</h4>
+<form method="POST" action="/achats">
+    <select name="ville_id" required>
+        <?php foreach ($besoins as $b): ?>
+            <option value="<?= $b['id_ville'] ?>"><?= $b['ville'] ?></option>
+        <?php endforeach; ?>
+    </select>
 
-<div class="section">
-    <h3>Nouvel Achat</h3>
+    <select name="article_id" required>
+        <?php foreach ($besoins as $b): ?>
+            <option value="<?= $b['id_article'] ?>"><?= $b['article'] ?></option>
+        <?php endforeach; ?>
+    </select>
 
-    <form method="POST" action="/achats">
+    <input type="number" step="0.01" name="quantite" placeholder="Quantité / Montant" required>
+    <button type="submit">Acheter</button>
+</form>
 
-        <label>Ville :</label>
-        <select name="ville_id" required>
-            <option value="">-- Choisir --</option>
-            <?php foreach ($villes as $v) : ?>
-                <option value="<?= $v['id_ville'] ?>">
-                    <?= htmlspecialchars($v['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <br><br>
-
-        <label>Article :</label>
-        <select name="article_id" required>
-            <option value="">-- Choisir --</option>
-            <?php foreach ($articles as $a) : ?>
-                <?php if ($a['pu'] != 1) : ?>
-                    <option value="<?= $a['id_article'] ?>">
-                        <?= htmlspecialchars($a['name']) ?> (PU: <?= $a['pu'] ?>)
-                    </option>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </select>
-
-        <br><br>
-
-        <label>Quantité :</label>
-        <input type="number" step="0.01" name="quantite" required>
-
-        <br><br>
-
-        <button type="submit">Valider Achat</button>
-    </form>
-</div>
-
-
-<div class="section">
-    <h3>Besoins Restants</h3>
-
-    <table>
+<h4>Besoins restants</h4>
+<table border="1">
+    <tr>
+        <th>Ville</th>
+        <th>Article</th>
+        <th>Besoin Initial</th>
+        <th>Quantité Déjà Achetée</th>
+        <th>Restant</th>
+    </tr>
+    <?php foreach ($besoins as $b): ?>
         <tr>
+            <td><?= $b['ville'] ?></td>
+            <td><?= $b['article'] ?></td>
+            <td><?= $b['besoin_initial'] ?></td>
+            <td><?= $b['quantite_achetee'] ?></td>
+            <td><?= $b['restant'] ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<!-- Historique des achats -->
+<div class="section">
+    <h3>Historique des Achats</h3>
+    <table border="1">
+        <tr>
+            <th>ID Achat</th>
             <th>Ville</th>
             <th>Article</th>
-            <th>Quantité Totale</th>
-            <th>Date Saisie</th>
-        </tr>
-
-        <?php foreach ($besoins as $b) : ?>
-            <tr>
-                <td><?= htmlspecialchars($b['ville']) ?></td>
-                <td><?= htmlspecialchars($b['article']) ?></td>
-                <td><?= $b['quantite'] ?></td>
-                <td><?= $b['date_saisie'] ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-</div>
-
-
-<div class="section">
-    <h3>Liste des Achats</h3>
-
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Ville</th>
+            <th>Quantité</th>
             <th>Total HT</th>
             <th>Total TTC</th>
             <th>Taux Frais (%)</th>
-            <th>Date</th>
+            <th>Date Achat</th>
         </tr>
-
-        <?php foreach ($achats as $a) : ?>
+        <?php foreach ($achats as $a): ?>
             <tr>
                 <td><?= $a['id_achat'] ?></td>
                 <td><?= htmlspecialchars($a['ville']) ?></td>
+                <td><?= htmlspecialchars($a['article']) ?></td>
+                <td><?= $a['quantite_achetee'] ?></td>
                 <td><?= $a['total_ht'] ?></td>
                 <td><?= $a['total_ttc'] ?></td>
                 <td><?= $a['taux_frais'] ?></td>
@@ -105,6 +66,3 @@
         <?php endforeach; ?>
     </table>
 </div>
-
-</body>
-</html>
