@@ -3,6 +3,7 @@
 // use Flight;
 
 use app\controllers\BesoinController;
+use app\controllers\DonController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -22,4 +23,11 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 
+	$router->get('/dons', function () {
+		(new DonController())->index();
+	});
+
+	$router->post('/dons', function () {
+		(new DonController())->store();
+	});
 }, [SecurityHeadersMiddleware::class]);
