@@ -21,9 +21,8 @@ use flight\net\Router;
  */
 $router->group('', function (Router $router) {
 
-	// ============ PUBLIC ============
-
 	$router->get('/', [DashboardController::class ,'getSummary']);
+	$router->get('/filtrer',[DashboardController::class , 'getSummary']);
 	
 
 

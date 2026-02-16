@@ -86,37 +86,45 @@ function formatDeviseAr($montant)
                         <div class="fw-semibold mb-1">Filtres</div>
                         <div class="text-secondary small">Affiner par région, ville et type de besoin (fake UI)</div>
                     </div>
-
-                    <div class="row g-2 w-100">
-                        <div class="col-12 col-md-4">
-                            <label class="form-label small text-secondary">Région</label>
-                            <select class="form-select">
-                                <option selected>Atsinanana</option>
-                                <option>Analamanga</option>
-                                <option>Boeny</option>
-                                <option>Androy</option>
-                            </select>
+                    <form action="filtrer" method="get" class="w-100">
+                        <div class="row g-2 w-100">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small text-secondary">Région</label>
+                                <select class="form-select" name="region">
+                                    <option value="">Toutes</option>
+                                    <?php foreach ($regions as $r) { ?>
+                                        <option value="<?= (int) $r['id_region'] ?>" <?= (($filters['region'] ?? '') !== '' && (int) ($filters['region'] ?? 0) === (int) $r['id_region']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($r['name']) ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small text-secondary">Ville</label>
+                                <select class="form-select" name="ville">
+                                    <option value="">Toutes</option>
+                                    <?php foreach ($villes as $v) { ?>
+                                        <option value="<?= (int) $v['id_ville'] ?>" <?= (($filters['ville'] ?? '') !== '' && (int) ($filters['ville'] ?? 0) === (int) $v['id_ville']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($v['name']) ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label small text-secondary">Type de besoin</label>
+                                <select class="form-select" name="besoin" disabled>
+                                    <option selected>Tous</option>
+                                    <option>Nature</option>
+                                    <option>Matériaux</option>
+                                    <option>Argent</option>
+                                </select>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+                                <a href="./" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <label class="form-label small text-secondary">Ville</label>
-                            <select class="form-select">
-                                <option selected>Toutes</option>
-                                <option>Toamasina</option>
-                                <option>Fénérive-Est</option>
-                                <option>Vatomandry</option>
-                                <option>Brickaville</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <label class="form-label small text-secondary">Type de besoin</label>
-                            <select class="form-select">
-                                <option selected>Tous</option>
-                                <option>Nature</option>
-                                <option>Matériaux</option>
-                                <option>Argent</option>
-                            </select>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -147,7 +155,7 @@ function formatDeviseAr($montant)
                         <?php foreach ($details as $detail) { ?>
                             <tr>
                                 <td>
-                                    <div class="fw-semibold"><?= $detail['ville'] ?></div>
+                                    <div class="fw-semibold"><?= $detail['name'] ?></div>
                                     <div class="text-secondary small">Région <?= $detail['region'] ?></div>
                                 </td>
                                 <td class="fw-semibold"><?= formatDeviseAr($detail['besoins_nature_montant']) ?></td>
@@ -159,8 +167,8 @@ function formatDeviseAr($montant)
                                     <?= formatDeviseAr($detail['besoins_argent_montant']) ?>
                                 </td>
                                 <td style="min-width:160px;">
-                                    <?= formatDeviseAr($detail['dons_attribues_montant'] != null ? $detail['dons_attribues_montant'] : 0 ) ?>
-                                    
+                                    <?= formatDeviseAr($detail['dons_attribues_montant'] != null ? $detail['dons_attribues_montant'] : 0) ?>
+
                                 </td>
                                 <td class="text-end">
                                     <a href="villes.php" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
@@ -171,7 +179,7 @@ function formatDeviseAr($montant)
                             </tr>
                         <?php } ?>
 
-                       
+
                     </tbody>
                 </table>
             </div>
