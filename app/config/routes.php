@@ -23,6 +23,12 @@ $router->group('', function (Router $router) {
 	$router->get('/', [DashboardController::class ,'getSummary']);
 	
 
+	$router->get('/besoins', function () {
+		(new BesoinController())->index();
+	});
+
+	$router->post('/besoins', function () {
+		(new BesoinController())->store();
+	});
 
 }, [SecurityHeadersMiddleware::class]);
-
