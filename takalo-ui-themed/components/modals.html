@@ -1,0 +1,57 @@
+<!-- components/modals.html -->
+<div class="modal fade" id="modalQuickPost" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content tt-card">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Ajouter un objet (démo)</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="modal-body needs-validation" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Titre</label>
+          <input class="form-control" required placeholder="Ex: Casque audio">
+          <div class="invalid-feedback">Titre requis.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Valeur estimée</label>
+          <input type="number" class="form-control" required min="1" placeholder="Ex: 120000">
+          <div class="invalid-feedback">Valeur invalide.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Catégorie</label>
+          <select class="form-select" required>
+            <option value="">Choisir…</option>
+            <option>Électronique</option>
+            <option>Maison</option>
+            <option>Mode</option>
+            <option>Loisirs</option>
+          </select>
+          <div class="invalid-feedback">Catégorie requise.</div>
+        </div>
+        <button class="btn btn-tt-primary w-100">Enregistrer (simulé)</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalConfirmDelete" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content tt-card">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Confirmer la suppression</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="tt-empty">
+          <div class="icon"><i class="bi bi-exclamation-triangle"></i></div>
+          <div class="fw-semibold mt-2">Cette action est irréversible.</div>
+          <div class="text-muted-2 small mt-1">Suppression simulée (pas de backend).</div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button class="btn btn-tt-ghost" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-danger" data-tt-action="delete-confirm">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
