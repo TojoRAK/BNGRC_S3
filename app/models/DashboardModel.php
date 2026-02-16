@@ -76,5 +76,37 @@ class DashboardModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getRegionById(int $regionId): ?array
+    {
+        $sql = "SELECT id_region, name FROM region WHERE id_region = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$regionId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function getBesoinsDetailsByRegion(int $regionId): array
+    {
+        $sql = "
+            SELECT
+                tb.name AS type_besoin,
+                a.name AS article,
+                a.pu AS pu,
+                SUM(bv.quantite) AS quantite_total,
+                SUM(bv.quantite * a.pu) AS montant_total
+            FROM besoin_ville bv
+            JOIN ville v ON v.id_ville = bv.id_ville
+            JOIN article a ON a.id_article = bv.id_article
+            JOIN type_besoin tb ON tb.id_type = a.id_type
+            WHERE v.id_region = ?
+            GROUP BY tb.name, a.id_article, a.name, a.pu
+            ORDER BY tb.name, a.name
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$regionId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
 }
