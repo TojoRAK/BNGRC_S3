@@ -35,7 +35,7 @@
     <div class="small text-secondary mb-2">Raccourcis</div>
     <div class="d-grid gap-2">
       <a class="btn btn-primary" href="dispatch.php"><i class="bi bi-play-fill me-1"></i>Simuler le dispatch</a>
-      <a class="btn btn-outline-secondary" href="besoins.php"><i class="bi bi-plus-circle me-1"></i>Saisir un besoin</a>
+      <a class="btn btn-outline-secondary" href="/besoins"><i class="bi bi-plus-circle me-1"></i>Saisir un besoin</a>
     </div>
 
     <div class="mt-3 small text-secondary">
