@@ -1,13 +1,6 @@
 <?php
 
-// use Flight;
-
-use app\controllers\AdminLogController;
-use app\controllers\CategorieController;
 use app\controllers\DashboardController;
-use app\controllers\PropositionController;
-
-use app\controllers\AuthClient;
 use app\controllers\BesoinController;
 use app\controllers\DonController;
 use app\controllers\UserController;
@@ -22,16 +15,25 @@ use flight\net\Router;
 
 $router->group('', function (Router $router) {
 
-
-	$router->get('/', [DashboardController::class ,'getSummary']);
 	
-
 	$router->get('/', function () {
+		if (session_status() !== PHP_SESSION_ACTIVE) {
+			session_start();
+		}
+
+		
+		if (isset($_SESSION['user'])) {
+			Flight::redirect('/dashboard');
+			return;
+		}
+
 		Flight::render('login');
 	});
 
+	
 	$router->post('/login', [UserController::class, 'doLogin']);
 
+	
 	$router->get('/logout', function () {
 		if (session_status() !== PHP_SESSION_ACTIVE) {
 			session_start();
@@ -41,18 +43,13 @@ $router->group('', function (Router $router) {
 		Flight::redirect('/');
 	});
 
-
-	$router->get('/accueil', function () {
+	
+	$router->get('/dashboard', function () {
 		requireAuth();
-		echo "<h2>Accueil Client</h2>";
+		(new DashboardController(Flight::app()))->getSummary();
 	});
 
-	$router->get('/admin/dashboard', function () {
-		requireAdmin();
-		echo "<h2>Dashboard Admin</h2>";
-	});
-
-
+	
 	$router->get('/besoins', function () {
 		requireAuth();
 		(new BesoinController())->index();
@@ -63,8 +60,7 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 
-
-
+	
 	$router->get('/dons', function () {
 		requireAuth();
 		(new DonController())->index();
@@ -74,7 +70,10 @@ $router->group('', function (Router $router) {
 		requireAdmin();
 		(new DonController())->store();
 	});
+
 }, [SecurityHeadersMiddleware::class]);
+
+
 
 function requireAuth()
 {
@@ -96,7 +95,7 @@ function requireAdmin()
 
 	if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'ADMIN') {
 		$_SESSION['flash_error'] = "Accès réservé aux administrateurs.";
-		Flight::redirect('/');
+		Flight::redirect('/dashboard');
 		exit;
 	}
 }

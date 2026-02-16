@@ -13,10 +13,10 @@
       <a href="villes.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-building"></i> Villes
       </a>
-      <a href="besoins.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+      <a href="/besoins" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-clipboard2-check"></i> Besoins
       </a>
-      <a href="dons.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+      <a href="/dons" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-box2-heart"></i> Dons
       </a>
       <a href="dispatch.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
