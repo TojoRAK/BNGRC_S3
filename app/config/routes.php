@@ -2,8 +2,6 @@
 
 // use Flight;
 
-
-use app\controllers\AuthClient;
 use app\controllers\BesoinController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
@@ -23,5 +21,5 @@ $router->group('', function (Router $router) {
 	$router->post('/besoins', function () {
 		(new BesoinController())->store();
 	});
-	
+
 }, [SecurityHeadersMiddleware::class]);
