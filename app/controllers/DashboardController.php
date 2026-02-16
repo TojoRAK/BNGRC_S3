@@ -55,4 +55,34 @@ class DashboardController
             ],
         ]);
     }
+
+    public function regionDetails()
+    {
+        $region = isset($_GET['region']) ? trim((string) $_GET['region']) : '';
+        if ($region === '' || !ctype_digit($region)) {
+            Flight::redirect('/dashboard');
+            return;
+        }
+
+        $regionId = (int) $region;
+        $model = new DashboardModel(Flight::db());
+
+        $regionRow = $model->getRegionById($regionId);
+        if (!$regionRow) {
+            Flight::notFound();
+            return;
+        }
+
+        $details = $model->getBesoinsDetailsByRegion($regionId);
+        $totalMontant = 0;
+        foreach ($details as $row) {
+            $totalMontant += (float) ($row['montant_total'] ?? 0);
+        }
+
+        Flight::render('dashboard/region_details', [
+            'region' => $regionRow,
+            'details' => $details,
+            'totalMontant' => $totalMontant,
+        ]);
+    }
 }

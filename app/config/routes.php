@@ -53,6 +53,11 @@ $router->group('', function (Router $router) {
 		(new DashboardController(Flight::app()))->getSummary();
 	});
 
+	$router->get('/region-details', function () {
+		// requireAuth();
+		(new DashboardController(Flight::app()))->regionDetails();
+	});
+
 	
 	$router->get('/besoins', function () {
 		(new BesoinController())->index();
