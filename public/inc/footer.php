@@ -1,5 +1,5 @@
 <?php /* inc/footer.php — shared footer + scripts */ ?>
-  </div><!-- /.bngrc-app -->
+  </div><!-- /.layout wrapper -->
 
   <footer class="border-top bg-body">
     <div class="container-fluid py-3 d-flex flex-column flex-sm-row gap-2 align-items-sm-center justify-content-between">

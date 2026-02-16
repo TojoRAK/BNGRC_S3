@@ -21,7 +21,7 @@ class DashboardController
     public function getSummary()
     {
         $model = new DashboardModel(Flight::db());
-        $dons = $model->getTotalDons();
+        $dons = $model->getTotalDispatched();
         $besoins = $model->getBesoinsTotaux();
         $reste = $besoins - $dons;
         $donsFormated = $model->formatDeviseAr($dons);

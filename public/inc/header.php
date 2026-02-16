@@ -17,9 +17,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
   <!-- Theme overrides -->
+  <link href="/assets/css/theme.css" rel="stylesheet">
 </head>
 
-<body class="bngrc-page">
+<body class="bngrc-app">
   <!-- Top header -->
   <nav class="navbar navbar-expand-lg bg-body border-bottom sticky-top">
     <div class="container-fluid">
@@ -78,4 +79,4 @@
   </nav>
 
   <!-- App layout -->
-  <div class="bngrc-app d-flex">
+  <div class="d-flex">

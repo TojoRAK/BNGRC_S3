@@ -18,7 +18,7 @@ function formatDeviseAr($montant)
                 <h1 class="h4 mb-1">Tableau de bord</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-sm mb-0">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/dashboard">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard.php">Accueil</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Tableau de bord</li>
                     </ol>
                 </nav>
@@ -86,7 +86,7 @@ function formatDeviseAr($montant)
                         <div class="fw-semibold mb-1">Filtres</div>
                         <div class="text-secondary small">Affiner par région, ville et type de besoin (fake UI)</div>
                     </div>
-                    <form action="<?= BASE_URL ?>/filtrer" method="get" class="w-100">
+                    <form action="filtrer" method="get" class="w-100">
                         <div class="row g-2 w-100">
                             <div class="col-12 col-md-4">
                                 <label class="form-label small text-secondary">Région</label>
@@ -121,7 +121,7 @@ function formatDeviseAr($montant)
                             </div>
                             <div class="col-12 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
-                                <a href="<?= BASE_URL ?>/dashboard" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+                                <a href="./" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
                             </div>
                         </div>
                     </form>
@@ -134,7 +134,7 @@ function formatDeviseAr($montant)
                 <div class="fw-semibold"><i class="bi bi-building me-2"></i>Villes — besoins & dons attribués</div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-funnel"></i> Réinitialiser</button>
-                    <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/dispatch"><i class="bi bi-play-fill"></i> Simuler
+                    <a class="btn btn-primary btn-sm" href="dispatch.php"><i class="bi bi-play-fill"></i> Simuler
                         dispatch</a>
                 </div>
             </div>
@@ -171,8 +171,8 @@ function formatDeviseAr($montant)
 
                                 </td>
                                 <td class="text-end">
-
-                                    <a href="<?= BASE_URL ?>/region-details?region=<?= (int) ($detail['id_region'] ?? 0) ?>" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
+                                    
+                                    <a href="region-details?region=<?= (int) ($detail['id_region'] ?? 0) ?>" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
                                         title="Voir besoins (région)"><i class="bi bi-clipboard2-check"></i></a>
                                 </td>
                             </tr>
