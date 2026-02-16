@@ -8,9 +8,7 @@ use app\controllers\DashboardController;
 use app\controllers\PropositionController;
 
 use app\controllers\AuthClient;
-use app\controllers\ObjetController;
-use app\controllers\StatController;
-use app\controllers\TradeController;
+use app\controllers\BesoinController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -21,7 +19,6 @@ use flight\net\Router;
  */
 $router->group('', function (Router $router) {
 
-	// ============ PUBLIC ============
 
 	$router->get('/', [DashboardController::class ,'getSummary']);
 	
