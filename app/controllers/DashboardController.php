@@ -20,12 +20,21 @@ class DashboardController
 
     public function getSummary(){
         $model = new DashboardModel(Flight::db());
-        $dons = $model->formatDeviseAr($model->getTotalDons());
-        $besoins = $model->formatDeviseAr($model->getBesoinsTotaux());
-
+        $dons = $model->getTotalDons();
+        $besoins = $model->getBesoinsTotaux();
+        $reste = $besoins - $dons;
+        $donsFormated = $model->formatDeviseAr($dons);
+        $besoinsFormated = $model->formatDeviseAr($besoins);
+        $resteFormated = $model->formatDeviseAr($reste);
+        $details = $model->getDetails();
         Flight::render('dashboard/index',[
-            'dons' => $dons,
-            'besoins' =>$besoins
+            'dons' => $donsFormated,
+            'besoins' =>$besoinsFormated,
+            'reste' => $resteFormated,
+            'details' => $details
         ]);
     }
+
+
+
 }

@@ -27,6 +27,12 @@ class DashboardModel
     {
         return number_format((int) $montant, 0, ',', ' ') . ' Ar';
     }
+    public function getDetails()
+    {
+        $sql = "SELECT * FROM v_details_ville";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 
 }
