@@ -41,7 +41,7 @@ class DashboardModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getVilles(?int $regionId )
+    public function getVilles(?int $regionId)
     {
         if ($regionId === null) {
             $sql = "SELECT id_ville, id_region, name FROM ville ORDER BY name";
@@ -107,6 +107,16 @@ class DashboardModel
         $stmt->execute([$regionId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    public function getTotalDispatched()
+    {
+        $sql = "
+        SELECT SUM(d.quantite_attribuee * a.pu)
+        FROM dispatch d
+        JOIN don don ON d.id_don = don.id_don
+        JOIN article a ON don.id_article = a.id_article
+    ";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchColumn();
+    }
 
 }
