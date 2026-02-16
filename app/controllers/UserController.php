@@ -36,7 +36,7 @@ class UserController
             return;
         }
 
-        
+
         if ($user['role'] !== $role) {
             $_SESSION['flash_error'] = "Rôle incorrect.";
             Flight::redirect('/');
@@ -50,10 +50,8 @@ class UserController
             'role' => $user['role']
         ];
 
-        if ($user['role'] === 'ADMIN') {
-            Flight::redirect('/admin/dashboard');
-        } else {
-            Flight::redirect('/accueil');
+        if ($user['role'] === 'ADMIN' || $user['role'] === 'CLIENT') {
+            Flight::redirect('/dashboard');
         }
     }
 }
