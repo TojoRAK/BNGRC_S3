@@ -26,12 +26,14 @@ class DispatchModel
             SELECT
                 d.id_don,
                 d.id_article,
+                a.name AS article_name,
                 d.quantite,
                 d.date_don,
                 d.source,
-                d.status
+                d.statut AS status
             FROM don d
-            WHERE d.status IN (?, ?)
+            JOIN article a ON a.id_article = d.id_article
+            WHERE d.statut IN (?, ?)
             ORDER BY d.date_don ASC, d.id_don ASC
         ";
 
@@ -51,11 +53,15 @@ class DispatchModel
             SELECT
                 b.id_besoin,
                 b.id_ville,
+                v.name AS ville_name,
                 b.id_article,
+                a.name AS article_name,
                 b.quantite,
                 b.date_saisie,
                 b.status
             FROM besoin_ville b
+            JOIN ville v ON v.id_ville = b.id_ville
+            JOIN article a ON a.id_article = b.id_article
             WHERE b.status IN (?, ?)
             ORDER BY b.date_saisie ASC, b.id_besoin ASC
         ";
@@ -126,7 +132,9 @@ class DispatchModel
                     'id_don' => $idDon,
                     'id_besoin' => $idBesoin,
                     'id_ville' => (int)$besoin['id_ville'],
+                    'ville_name' => $besoin['ville_name'] ?? null,
                     'id_article' => $idArticle,
+                    'article_name' => $don['article_name'] ?? ($besoin['article_name'] ?? null),
                     'attribue' => $attribue,
 
                     'date_don' => $don['date_don'],
@@ -145,6 +153,8 @@ class DispatchModel
         $coverage = ($totalBesoin > 0) ? round(($totalAttribue / $totalBesoin) * 100, 2) : 0.0;
 
         return [
+            'dons' => $dons,
+            'besoins' => $besoins,
             'allocations' => $allocations,
             'donRemaining' => $donRemaining,
             'besoinRemaining' => $besoinRemaining,

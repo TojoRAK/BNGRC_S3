@@ -6,6 +6,7 @@ use app\controllers\DashboardController;
 use app\controllers\UserController;
 use app\controllers\DonController;
 use app\controllers\BesoinController;
+use app\controllers\DispatchController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -72,6 +73,12 @@ $router->group('', function (Router $router) {
 		(new DonController())->store();
 	});
 	
+	$router->get('/dispatch', [DispatchController::class, 'index']);
+	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
+	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
+
+
+
 
 }, [SecurityHeadersMiddleware::class]);
 
