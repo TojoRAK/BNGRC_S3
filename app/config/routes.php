@@ -22,4 +22,9 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 
+
+	$router->get('/', function(){
+		Flight::render('dispatch');
+	});
+
 }, [SecurityHeadersMiddleware::class]);
