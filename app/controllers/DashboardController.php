@@ -18,7 +18,8 @@ class DashboardController
         $this->app = $app;
     }
 
-    public function getSummary(){
+    public function getSummary()
+    {
         $model = new DashboardModel(Flight::db());
         $dons = $model->getTotalDons();
         $besoins = $model->getBesoinsTotaux();
@@ -26,15 +27,32 @@ class DashboardController
         $donsFormated = $model->formatDeviseAr($dons);
         $besoinsFormated = $model->formatDeviseAr($besoins);
         $resteFormated = $model->formatDeviseAr($reste);
-        $details = $model->getDetails();
-        Flight::render('dashboard/index',[
+        $region = isset($_GET['region']) ? trim((string) $_GET['region']) : "";
+        $ville = isset($_GET['ville']) ? trim((string) $_GET['ville']) : "";
+
+        $regionId = ($region !== '' && ctype_digit($region)) ? (int) $region : null;
+        $villeId = ($ville !== '' && ctype_digit($ville)) ? (int) $ville : null;
+
+        $regions = $model->getRegions();
+        $villes = $model->getVilles($regionId);
+        $details = [];
+
+        if (empty($region) && empty($ville)) {
+            $details = $model->getDetails();
+        } else {
+            $details = $model->filter($regionId, $villeId, "");
+        }
+        Flight::render('dashboard/index', [
             'dons' => $donsFormated,
-            'besoins' =>$besoinsFormated,
+            'besoins' => $besoinsFormated,
             'reste' => $resteFormated,
-            'details' => $details
+            'details' => $details,
+            'regions' => $regions,
+            'villes' => $villes,
+            'filters' => [
+                'region' => $region,
+                'ville' => $ville,
+            ],
         ]);
     }
-
-
-
 }

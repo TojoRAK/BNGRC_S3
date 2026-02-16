@@ -34,5 +34,47 @@ class DashboardModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getRegions()
+    {
+        $sql = "SELECT id_region, name FROM region ORDER BY name";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVilles(?int $regionId )
+    {
+        if ($regionId === null) {
+            $sql = "SELECT id_ville, id_region, name FROM ville ORDER BY name";
+            $stmt = $this->pdo->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        $sql = "SELECT id_ville, id_region, name FROM ville WHERE id_region = ? ORDER BY name";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$regionId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function filter(?int $regionId, ?int $villeId, $besoin)
+    {
+        $sql = "SELECT * FROM v_details_ville v WHERE 1=1\n";
+        $params = [];
+
+        if ($regionId !== null) {
+            $sql .= " AND v.id_region = ?\n";
+            $params[] = $regionId;
+        }
+        if ($villeId !== null) {
+            $sql .= " AND v.id_ville = ?\n";
+            $params[] = $villeId;
+        }
+        // if (!empty($besoin) && $besoin != null) {
+        //     $sql .= "AND id_ville = ?";
+        // }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
 }

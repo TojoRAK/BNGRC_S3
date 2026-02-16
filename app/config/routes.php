@@ -17,6 +17,8 @@ use flight\net\Router;
 $router->group('', function (Router $router) {
 
 
+	$router->get('/', [DashboardController::class ,'getSummary']);
+	$router->get('/filtrer',[DashboardController::class , 'getSummary']);
 	
 	$router->get('/', function () {
 		if (session_status() !== PHP_SESSION_ACTIVE) {
