@@ -85,4 +85,19 @@ class DashboardController
             'totalMontant' => $totalMontant,
         ]);
     }
+    public function getStatsJson()
+    {
+        header('Content-Type: application/json');
+        $model = new DashboardModel(Flight::db());
+
+        $besoins = $model->getBesoinsTotaux();
+        $satisfaits = $model->getTotalDispatched(); 
+        $reste = $besoins - $satisfaits;
+
+        Flight::json([
+            'besoins_totaux' => $model->formatDeviseAr($besoins),
+            'besoins_satisfaits' => $model->formatDeviseAr($satisfaits),
+            'besoins_restants' => $model->formatDeviseAr($reste)
+        ]);
+    }
 }

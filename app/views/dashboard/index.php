@@ -18,11 +18,17 @@ function formatDeviseAr($montant)
                 <h1 class="h4 mb-1">Tableau de bord</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-sm mb-0">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/dashboard">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard.php">Accueil</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Tableau de bord</li>
                     </ol>
                 </nav>
             </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Statistiques Globales</h5>
+            <button id="btn-refresh-stats" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-arrow-clockwise"></i> Actualiser
+            </button>
         </div>
 
         <div class="row g-3 mb-3">
@@ -31,8 +37,8 @@ function formatDeviseAr($montant)
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <div class="text-secondary small">Total des dons enregistrés</div>
-                                <div class="h4 mb-0"><?= $dons ?></div>
+                                <div class="text-secondary small">Total des besoins satisfaits</div>
+                                <div class="h4 mb-0" id="stat-satisfaits"><?= $dons ?></div>
                             </div>
                             <div class="fs-2 text-primary"><i class="bi bi-box2-heart"></i></div>
                         </div>
@@ -49,7 +55,7 @@ function formatDeviseAr($montant)
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="text-secondary small">Besoins totaux estimés</div>
-                                <div class="h4 mb-0"><?= $besoins ?></div>
+                                <div class="h4 mb-0" id="stat-besoins-totaux"><?= $besoins ?></div>
                             </div>
                             <div class="fs-2 text-success"><i class="bi bi-clipboard2-check"></i></div>
                         </div>
@@ -66,7 +72,7 @@ function formatDeviseAr($montant)
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="text-secondary small">Reste à couvrir</div>
-                                <div class="h4 mb-0"><?= $reste ?></div>
+                                <div class="h4 mb-0" id="stat-reste"><?= $reste ?></div>
                             </div>
                             <div class="fs-2 text-warning"><i class="bi bi-exclamation-triangle"></i></div>
                         </div>
@@ -86,7 +92,7 @@ function formatDeviseAr($montant)
                         <div class="fw-semibold mb-1">Filtres</div>
                         <div class="text-secondary small">Affiner par région, ville et type de besoin (fake UI)</div>
                     </div>
-                    <form action="<?= BASE_URL ?>/filtrer" method="get" class="w-100">
+                    <form action="filtrer" method="get" class="w-100">
                         <div class="row g-2 w-100">
                             <div class="col-12 col-md-4">
                                 <label class="form-label small text-secondary">Région</label>
@@ -121,7 +127,7 @@ function formatDeviseAr($montant)
                             </div>
                             <div class="col-12 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
-                                <a href="<?= BASE_URL ?>/dashboard" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+                                <a href="./" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
                             </div>
                         </div>
                     </form>
@@ -134,7 +140,7 @@ function formatDeviseAr($montant)
                 <div class="fw-semibold"><i class="bi bi-building me-2"></i>Villes — besoins & dons attribués</div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-funnel"></i> Réinitialiser</button>
-                    <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/dispatch"><i class="bi bi-play-fill"></i> Simuler
+                    <a class="btn btn-primary btn-sm" href="dispatch.php"><i class="bi bi-play-fill"></i> Simuler
                         dispatch</a>
                 </div>
             </div>
@@ -172,7 +178,8 @@ function formatDeviseAr($montant)
                                 </td>
                                 <td class="text-end">
 
-                                    <a href="<?= BASE_URL ?>/region-details?region=<?= (int) ($detail['id_region'] ?? 0) ?>" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
+                                    <a href="region-details?region=<?= (int) ($detail['id_region'] ?? 0) ?>"
+                                        class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
                                         title="Voir besoins (région)"><i class="bi bi-clipboard2-check"></i></a>
                                 </td>
                             </tr>
@@ -194,5 +201,24 @@ function formatDeviseAr($montant)
 
     </div>
 </main>
+<script>
+document.getElementById('btn-refresh-stats').addEventListener('click', function() {
+    this.disabled = true;
+    const icon = this.querySelector('i');
+    icon.classList.add('bi-arrow-clockwise');
+    
+    fetch('/api/stats')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('stat-satisfaits').textContent = data.besoins_satisfaits;
+            document.getElementById('stat-besoins-totaux').textContent = data.besoins_totaux;
+            document.getElementById('stat-reste').textContent = data.besoins_restants;
+            
+            // alert('✅ Statistiques actualisées !');
+        })
+        .catch(err => alert('Erreur: ' + err.message))
+        .finally(() => this.disabled = false);
+});
+</script>
 
 <?php include('inc/footer.php'); ?>

@@ -19,9 +19,9 @@ use flight\net\Router;
 $router->group('', function (Router $router) {
 
 
-	$router->get('/', [DashboardController::class ,'getSummary']);
-	$router->get('/filtrer',[DashboardController::class , 'getSummary']);
-	
+	$router->get('/', [DashboardController::class, 'getSummary']);
+	$router->get('/filtrer', [DashboardController::class, 'getSummary']);
+
 	$router->get('/', function () {
 		if (session_status() !== PHP_SESSION_ACTIVE) {
 			session_start();
@@ -60,7 +60,7 @@ $router->group('', function (Router $router) {
 		(new DashboardController(Flight::app()))->regionDetails();
 	});
 
-	
+
 
 	$router->get('/besoins', function () {
 		(new BesoinController())->index();
@@ -70,7 +70,10 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 
-
+	Flight::route('GET /api/stats', function () {
+		$controller = new DashboardController(Flight::app());
+		$controller->getStatsJson();
+	});
 	$router->get('/dons', function () {
 		requireAuth();
 		(new DonController())->index();
@@ -80,7 +83,7 @@ $router->group('', function (Router $router) {
 		requireAdmin();
 		(new DonController())->store();
 	});
-	
+
 	$router->get('/dispatch', [DispatchController::class, 'index']);
 	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
 	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
