@@ -7,6 +7,7 @@ use app\controllers\UserController;
 use app\controllers\DonController;
 use app\controllers\BesoinController;
 use app\controllers\DispatchController;
+use app\controllers\AchatController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -26,7 +27,7 @@ $router->group('', function (Router $router) {
 			session_start();
 		}
 
-		
+
 		if (isset($_SESSION['user'])) {
 			Flight::redirect('/dashboard');
 			return;
@@ -35,10 +36,10 @@ $router->group('', function (Router $router) {
 		Flight::render('login');
 	});
 
-	
+
 	$router->post('/login', [UserController::class, 'doLogin']);
 
-	
+
 	$router->get('/logout', function () {
 		if (session_status() !== PHP_SESSION_ACTIVE) {
 			session_start();
@@ -48,7 +49,7 @@ $router->group('', function (Router $router) {
 		Flight::redirect('/');
 	});
 
-	
+
 	$router->get('/dashboard', function () {
 		requireAuth();
 		(new DashboardController(Flight::app()))->getSummary();
@@ -60,6 +61,7 @@ $router->group('', function (Router $router) {
 	});
 
 	
+
 	$router->get('/besoins', function () {
 		(new BesoinController())->index();
 	});
@@ -68,7 +70,8 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 
-		$router->get('/dons', function () {
+
+	$router->get('/dons', function () {
 		requireAuth();
 		(new DonController())->index();
 	});
@@ -85,6 +88,15 @@ $router->group('', function (Router $router) {
 
 
 
+	$router->get('/achats', function () {
+		requireAuth();
+		(new AchatController(Flight::db()))->index();
+	});
+
+	$router->post('/achats', function () {
+		requireAdmin();
+		(new AchatController(Flight::db()))->store();
+	});
 }, [SecurityHeadersMiddleware::class]);
 
 
