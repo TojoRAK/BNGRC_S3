@@ -25,6 +25,9 @@
       <a href="rapports.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-file-earmark-bar-graph"></i> Rapports
       </a>
+      <a href="/achats" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+        <i class="bi-cash-stack"></i> Achats
+      </a>
       <a href="settings.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-gear"></i> Paramètres
       </a>
