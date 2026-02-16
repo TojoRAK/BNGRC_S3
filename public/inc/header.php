@@ -1,40 +1,81 @@
-<nav class="navbar navbar-expand-lg tt-navbar sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="../client/index.html">
-                <span class="tt-brand-badge fw-bold">TT</span>
-                <div class="d-flex flex-column lh-sm">
-                    <span class="fw-semibold" style="color:var(--tt-text)">Takalo-takalo</span>
-                    <span class="text-muted-2 small d-none d-md-inline">Plateforme d’échange d’objets</span>
-                </div>
+<?php
+/* inc/header.php — shared <head> + top navbar + layout wrapper
+   Default theme: light. To enable dark mode quickly:
+   - change data-bs-theme="light" to data-bs-theme="dark" below
+*/
+?>
+<!doctype html>
+<html lang="fr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BNGRC — Dons & Distributions</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Theme overrides -->
+</head>
+
+<body class="bngrc-page">
+  <!-- Top header -->
+  <nav class="navbar navbar-expand-lg bg-body border-bottom sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.php">
+        <span class="badge text-bg-primary rounded-pill"><i class="bi bi-heart-pulse"></i></span>
+        <span class="fw-semibold">BNGRC</span>
+        <span class="text-secondary d-none d-sm-inline">— Dons & Distributions</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bngrcTopNav"
+              aria-controls="bngrcTopNav" aria-expanded="false" aria-label="Menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="bngrcTopNav">
+        <form class="d-flex ms-lg-3 my-2 my-lg-0" role="search">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input class="form-control" type="search" placeholder="Rechercher (ville, don, article…)" aria-label="Rechercher">
+          </div>
+        </form>
+
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+          <li class="nav-item d-none d-lg-block">
+            <span class="text-secondary small">
+              <i class="bi bi-geo-alt"></i> Région: <strong>Atsinanana</strong>
+            </span>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="rapports.php" data-bs-toggle="tooltip" title="Rapports & exports">
+              <i class="bi bi-file-earmark-bar-graph"></i>
+              <span class="d-lg-none ms-1">Rapports</span>
             </a>
+          </li>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-                <span class="navbar-toggler-icon" style="filter: invert(.85)"></span>
-            </button>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary"
+                    style="width:32px;height:32px;">
+                <i class="bi bi-person"></i>
+              </span>
+              <span class="d-none d-lg-inline">Admin</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="settings.php"><i class="bi bi-gear me-2"></i>Paramètres</a></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person-badge me-2"></i>Profil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="login.php"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-            <div class="collapse navbar-collapse" id="topNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
-                    <li class="nav-item"><a class="nav-link tt-nav-link" href="/index">Objets</a></li>
-                    <li class="nav-item"><a class="nav-link tt-nav-link" href="/my-objets">Mes objets</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link tt-nav-link" href="/propositions/list">Échanges</a></li>
-                    <li class="nav-item"><a class="nav-link tt-nav-link" href="../client/profile.html">Profil</a></li>
-
-                    <li class="nav-item d-flex align-items-center gap-2 ms-lg-2">
-                        <button class="btn btn-tt-ghost btn-tt-icon" data-tt-theme-toggle title="Basculer thème">
-                            <i class="bi bi-sun"></i>
-                        </button>
-
-                        <button class="btn btn-tt-primary btn-sm px-3" data-bs-toggle="modal"
-                            data-bs-target="#modalQuickPost">
-                            <i class="bi bi-plus-circle me-1"></i>Ajouter
-                        </button>
-
-                        <a class="btn btn-tt-ghost btn-sm" href="/auth/logout">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <!-- App layout -->
+  <div class="bngrc-app d-flex">

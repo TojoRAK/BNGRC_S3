@@ -21,10 +21,6 @@ $router->group('', function (Router $router) {
 	$router->post('/besoins', function () {
 		(new BesoinController())->store();
 	});
-
-
-	$router->get('/', function(){
-		Flight::render('dispatch');
-	});
+	
 
 }, [SecurityHeadersMiddleware::class]);
