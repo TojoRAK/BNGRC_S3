@@ -3,6 +3,7 @@
 // use Flight;
 
 use app\controllers\BesoinController;
+use app\controllers\DispatchController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -22,5 +23,11 @@ $router->group('', function (Router $router) {
 		(new BesoinController())->store();
 	});
 	
+	$router->get('/dispatch', [DispatchController::class, 'index']);
+	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
+	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
+
+
+
 
 }, [SecurityHeadersMiddleware::class]);
