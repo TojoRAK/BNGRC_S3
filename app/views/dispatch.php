@@ -1,5 +1,4 @@
 <?php
-// Helpers
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function nf($n): string {
   if ($n === null) return '';
@@ -11,71 +10,14 @@ function nf($n): string {
 $coverage = (float)($stats['coverage_percent'] ?? 0);
 $coverage = max(0, min(100, $coverage));
 ?>
-<!doctype html>
-<html lang="fr" data-bs-theme="light">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dispatch — BNGRC</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-  <link href="/assets/css/theme.css" rel="stylesheet">
-</head>
+<?php include('inc/header.php') ?>
 
 <body class="bngrc-app">
 
   <div class="bngrc-shell">
 
     <!-- Sidebar -->
-    <aside class="bngrc-sidebar">
-      <div class="bngrc-sidehead">
-        <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
-          <span class="bngrc-logo"><i class="bi bi-box2-heart"></i></span>
-          <span class="lh-sm">
-            <span class="d-block fw-semibold">BNGRC</span>
-            <span class="d-block text-secondary small">Collectes & Dispatch</span>
-          </span>
-        </a>
-      </div>
-
-      <div class="px-3 pb-3">
-        <div class="bngrc-sidecard">
-          <div class="small text-secondary mb-2">Règles</div>
-          <div class="d-flex flex-wrap gap-2">
-            <span class="badge bngrc-pill"><i class="bi bi-clock-history me-1"></i> Dons : FIFO (date)</span>
-            <span class="badge bngrc-pill"><i class="bi bi-list-check me-1"></i> Besoins : FIFO (saisie)</span>
-          </div>
-        </div>
-      </div>
-
-      <nav class="bngrc-nav px-2">
-        <a class="bngrc-navlink" href="/dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-        <a class="bngrc-navlink" href="/dons"><i class="bi bi-inbox"></i><span>Collectes</span></a>
-        <a class="bngrc-navlink active" href="/dispatch"><i class="bi bi-diagram-3"></i><span>Dispatch</span></a>
-        <a class="bngrc-navlink" href="/besoins"><i class="bi bi-truck"></i><span>Besoins</span></a>
-        <a class="bngrc-navlink" href="/villes"><i class="bi bi-geo-alt"></i><span>Villes</span></a>
-
-        <div class="bngrc-navsep"></div>
-
-        <a class="bngrc-navlink" href="/settings"><i class="bi bi-gear"></i><span>Paramètres</span></a>
-        <a class="bngrc-navlink" href="/help"><i class="bi bi-question-circle"></i><span>Aide</span></a>
-      </nav>
-
-      <div class="mt-auto p-3">
-        <div class="bngrc-user">
-          <div class="bngrc-avatar"><i class="bi bi-person"></i></div>
-          <div class="lh-sm">
-            <div class="fw-semibold">Admin</div>
-            <div class="text-secondary small">Session active</div>
-          </div>
-          <button class="btn btn-sm btn-outline-secondary ms-auto" type="button" disabled>
-            <i class="bi bi-box-arrow-right"></i>
-          </button>
-        </div>
-      </div>
-    </aside>
+    <?php include('inc/sidebar.php')?>
 
     <!-- Main -->
     <div class="bngrc-main">

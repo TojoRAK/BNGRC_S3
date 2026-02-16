@@ -171,8 +171,7 @@ function formatDeviseAr($montant)
 
                                 </td>
                                 <td class="text-end">
-                                    <a href="villes.php" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
-                                        title="Voir la ville"><i class="bi bi-eye"></i></a>
+                                    
                                     <a href="region-details?region=<?= (int) ($detail['id_region'] ?? 0) ?>" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip"
                                         title="Voir besoins (région)"><i class="bi bi-clipboard2-check"></i></a>
                                 </td>
