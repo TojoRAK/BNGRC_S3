@@ -412,7 +412,6 @@ class DispatchModel
         try {
             $this->pdo->beginTransaction();
 
-            // id_achat = NULL for don-based dispatches
             $sqlInsertDispatch = "
             INSERT INTO dispatch (id_don, id_achat, id_ville, id_besoin, quantite_attribuee, date_dispatch)
             VALUES (?, NULL, ?, ?, ?, NOW())
@@ -423,9 +422,8 @@ class DispatchModel
             foreach ($allocations as $a) {
                 $stmtInsert->execute([
                     $a['id_don'],
-                    $a['id_besoin'],
                     $a['id_ville'],
-                    $a['id_besoin'],   // <-- was missing before
+                    $a['besoin']['id_besoin'],
                     $a['attribue'],
                 ]);
                 $nbDispatchInserted++;
