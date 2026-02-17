@@ -76,6 +76,7 @@ function formatDeviseAr($montant)
                                 <tr>
                                     <th>Ville</th>
                                     <th>Article</th>
+                                    <th>PU</th>
                                     <th>Besoin Initial</th>
                                     <th>Quantité Déjà Achetée</th>
                                     <th>Restant</th>
@@ -86,6 +87,7 @@ function formatDeviseAr($montant)
                                     <tr>
                                         <td><?= htmlspecialchars($b['ville']) ?></td>
                                         <td><?= htmlspecialchars($b['article']) ?></td>
+                                        <td><?= number_format($b['pu'], 0, ',', ' ') ?> Ar</td>
                                         <td><?= $b['besoin_initial'] ?></td>
                                         <td><?= $b['quantite_achetee'] ?></td>
                                         <td><?= $b['restant'] ?></td>
@@ -112,6 +114,7 @@ function formatDeviseAr($montant)
                                     <th>ID Achat</th>
                                     <th>Ville</th>
                                     <th>Article</th>
+                                    <th>PU</th>
                                     <th>Quantité</th>
                                     <th>Total HT</th>
                                     <th>Total TTC</th>
@@ -125,6 +128,7 @@ function formatDeviseAr($montant)
                                         <td><?= $a['id_achat'] ?></td>
                                         <td><?= htmlspecialchars($a['ville']) ?></td>
                                         <td><?= htmlspecialchars($a['article']) ?></td>
+                                        <td><?= number_format($a['pu'], 0, ',', ' ') ?> Ar</td>
                                         <td><?= $a['quantite_achetee'] ?></td>
                                         <td><?= formatDeviseAr($a['total_ht']) ?></td>
                                         <td><?= formatDeviseAr($a['total_ttc']) ?></td>

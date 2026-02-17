@@ -21,7 +21,7 @@ class AchatController
         $besoins = $this->model->getBesoinsSummary();
         $achats = $this->model->getAchatsHistorique();
         $villes = $this->model->getVilles();
-        $articles = $this->model->getArticles();
+        $articles = $this->model->getArticlesForAchat();
 
         Flight::render('achats', [
             'totalArgent' => $totalArgent,
