@@ -85,6 +85,36 @@ class DashboardController
             'totalMontant' => $totalMontant,
         ]);
     }
+
+    public function villeDetails()
+    {
+        $ville = isset($_GET['ville']) ? trim((string) $_GET['ville']) : '';
+        if ($ville === '' || !ctype_digit($ville)) {
+            Flight::redirect('/dashboard');
+            return;
+        }
+
+        $villeId = (int) $ville;
+        $model = new DashboardModel(Flight::db());
+
+        $villeRow = $model->getVilleById($villeId);
+        if (!$villeRow) {
+            Flight::notFound();
+            return;
+        }
+
+        $details = $model->getBesoinsDetailsByVille($villeId);
+        $totalMontant = 0;
+        foreach ($details as $row) {
+            $totalMontant += (float) ($row['montant_total'] ?? 0);
+        }
+
+        Flight::render('dashboard/ville_details', [
+            'ville' => $villeRow,
+            'details' => $details,
+            'totalMontant' => $totalMontant,
+        ]);
+    }
     public function getStatsJson()
     {
         header('Content-Type: application/json');

@@ -292,6 +292,7 @@ $coverage = max(0, min(100, $coverage));
                     <th class="ps-3">Don</th>
                     <th>Besoin</th>
                     <th>Ville</th>
+                    <th>Article</th>
                     <th class="text-end">Attribué</th>
                     <th class="text-end">Reste don</th>
                     <th class="pe-3">Reste besoin</th>
@@ -301,8 +302,9 @@ $coverage = max(0, min(100, $coverage));
                   <?php foreach ($allocations as $a): ?>
                     <tr>
                       <td class="ps-3 fw-semibold">DON-<?= str_pad((string)$a['id_don'], 4, '0', STR_PAD_LEFT) ?></td>
-                      <td class="fw-semibold">BES-<?= str_pad((string)$a['id_besoin'], 4, '0', STR_PAD_LEFT) ?></td>
+                      <td class="fw-semibold">BES-<?= str_pad((string)$a['besoin']['id_besoin'], 4, '0', STR_PAD_LEFT) ?></td>
                       <td><?= e($a['ville_name'] ?? ('Ville #' . (int)$a['id_ville'])) ?></td>
+                      <td class="fw-semibold"><?= (string)$a['besoin']['article_name'] ?></td>
                       <td class="text-end fw-semibold"><?= nf($a['attribue']) ?></td>
                       <td class="text-end"><span class="badge bngrc-pill"><?= nf($a['reste_don']) ?></span></td>
                       <td class="pe-3"><span class="badge bngrc-pill"><?= nf($a['reste_besoin']) ?></span></td>

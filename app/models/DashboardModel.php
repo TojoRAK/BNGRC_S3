@@ -85,6 +85,20 @@ class DashboardModel
         return $row ?: null;
     }
 
+    public function getVilleById(int $villeId): ?array
+    {
+        $sql = "
+            SELECT v.id_ville, v.name, v.id_region, r.name AS region
+            FROM ville v
+            JOIN region r ON r.id_region = v.id_region
+            WHERE v.id_ville = ?
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$villeId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function getBesoinsDetailsByRegion(int $regionId): array
     {
         $sql = "
@@ -105,6 +119,28 @@ class DashboardModel
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$regionId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getBesoinsDetailsByVille(int $villeId): array
+    {
+        $sql = "
+            SELECT
+                tb.name AS type_besoin,
+                a.name AS article,
+                a.pu AS pu,
+                SUM(bv.quantite) AS quantite_total,
+                SUM(bv.quantite * a.pu) AS montant_total
+            FROM besoin_ville bv
+            JOIN article a ON a.id_article = bv.id_article
+            JOIN type_besoin tb ON tb.id_type = a.id_type
+            WHERE bv.id_ville = ?
+            GROUP BY tb.name, a.id_article, a.name, a.pu
+            ORDER BY tb.name, a.name
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$villeId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getTotalDispatched()

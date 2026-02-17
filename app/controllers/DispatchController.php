@@ -43,7 +43,7 @@ class DispatchController
 
     public function simulate()
     {
-        $data = $this->model->simulateDispatch();
+        $data = $this->model->simulateDispatchCroissants();
         Flight::render('dispatch', $data);
 
         exit;
