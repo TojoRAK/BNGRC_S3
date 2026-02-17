@@ -60,6 +60,11 @@ $router->group('', function (Router $router) {
 		(new DashboardController(Flight::app()))->regionDetails();
 	});
 
+	$router->get('/ville-details', function () {
+		// requireAuth();
+		(new DashboardController(Flight::app()))->villeDetails();
+	});
+
 
 
 	$router->get('/besoins', function () {
