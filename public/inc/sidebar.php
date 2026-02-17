@@ -15,11 +15,14 @@
       <a href="/dispatch" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-diagram-3"></i> Dispatch (simulation)
       </a>
-       <a href="/dons" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+      <a href="/dons" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-box2-heart"></i> Dons
       </a>
-       <a href="/achats" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+      <a href="/achats" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-cash-stack"></i>Achats
+      </a>
+      <a href="/resetData/1234" class="list-group-item list-group-item-action d-flex align-items-center gap-2 text-danger">
+        <i class="bi bi-arrow-counterclockwise"></i>Reset Base
       </a>
     </div>
 
@@ -37,5 +40,3 @@
     </div>
   </div>
 </aside>
-
-

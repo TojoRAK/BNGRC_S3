@@ -8,6 +8,7 @@ use app\controllers\DonController;
 use app\controllers\BesoinController;
 use app\controllers\DispatchController;
 use app\controllers\AchatController;
+use app\controllers\ResetController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -107,6 +108,12 @@ $router->group('', function (Router $router) {
 		// requireAdmin();
 		(new AchatController(Flight::db()))->store();
 	});
+
+
+	$router->get('/resetData/1234', function () {
+		(new ResetController(Flight::app())->resetData());
+	});
+
 }, [SecurityHeadersMiddleware::class]);
 
 
