@@ -105,7 +105,7 @@ class DispatchController
         // $this->index();  
     }
 
-    public function validate()
+    public function validateAchat()
     {
         $id_achat = $_POST['id_achat'] ?? null;
         if (!$id_achat) {

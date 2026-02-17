@@ -157,7 +157,7 @@ function formatDeviseAr($montant)
                                         <td><?= $a['date_achat'] ?></td>
                                         <td>
                                             <?php if (!$a['deja_dispatche']): ?>
-                                                <form method="POST" action="/dispatch/validate">
+                                                <form method="POST" action="/dispatch/validateAchat">
                                                     <input type="hidden" name="id_achat" value="<?= $a['id_achat'] ?>">
                                                     <button class="btn btn-sm btn-warning">Dispatcher</button>
                                                 </form>
