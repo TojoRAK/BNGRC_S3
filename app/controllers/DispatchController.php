@@ -112,7 +112,7 @@ class DispatchController
             // Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
         }
 
-        // Flight::redirect('/dispatch');
+        Flight::redirect('/dispatch');
         exit;
     }
 
