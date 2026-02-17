@@ -58,9 +58,10 @@ $coverage = max(0, min(100, $coverage));
             </form>
 
             <form method="post" action="/dispatch/validate" class="d-inline">
+                <input type="hidden" name="mode_used" value="<?= $mode_used ?? 0 ?>">
+
               <button class="btn btn-sm btn-success" type="submit" <?php if (empty($allocations))
                 echo "disabled" ?>>
-                <input type="hidden" name="mode_used" value="<?= $mode_used ?? '0'?>">
                   <i class="bi bi-check2-circle me-1"></i> Valider
                 </button>
               </form>
@@ -370,6 +371,7 @@ $coverage = max(0, min(100, $coverage));
           <button class="btn btn-success w-100" type="submit" <?php if (empty($allocations))
             echo "disabled" ?>><i
                 class="bi bi-check2-circle me-1"></i> Valider</button>
+          <input type="hidden" name="mode_used" value="<?= $modeUsed ?? 0 ?>">
           </form>
           <form method="post" action="/dispatch/reset">
             <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-arrow-counterclockwise me-1"></i>

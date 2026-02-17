@@ -1,7 +1,5 @@
 <?php
 
-// use Flight;
-
 use app\controllers\DashboardController;
 use app\controllers\UserController;
 use app\controllers\DonController;
@@ -19,46 +17,98 @@ use flight\net\Router;
  */
 $router->group('', function (Router $router) {
 
+   
+    $router->get('/', function () {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-	$router->get('/', [DashboardController::class, 'getSummary']);
-	$router->get('/filtrer', [DashboardController::class, 'getSummary']);
+        if (isset($_SESSION['user'])) {
+            Flight::redirect('/dashboard');
+            return;
+        }
 
-	$router->get('/', function () {
-		if (session_status() !== PHP_SESSION_ACTIVE) {
-			session_start();
-		}
+        Flight::render('login'); 
+    });
 
+    $router->post('/login', [UserController::class, 'doLogin']);
 
-		if (isset($_SESSION['user'])) {
-			Flight::redirect('/dashboard');
-			return;
-		}
+    $router->get('/logout', function () {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        session_destroy();
+        Flight::redirect('/');
+    });
 
-		Flight::render('login');
-	});
+    // DASHBOARD: Admin & Client can access
+    $router->get('/dashboard', function () {
+        requireAuth(['ADMIN', 'CLIENT']);
+        (new DashboardController(Flight::app()))->getSummary();
+    });
 
+    $router->get('/region-details', function () {
+        requireAuth(['ADMIN', 'CLIENT']);
+        (new DashboardController(Flight::app()))->regionDetails();
+    });
 
-	$router->post('/login', [UserController::class, 'doLogin']);
+    // BESOINS: Admin only
+    $router->get('/besoins', function () {
+        requireAuth(['ADMIN']);
+        (new BesoinController())->index();
+    });
 
+    $router->post('/besoins', function () {
+        requireAuth(['ADMIN']);
+        (new BesoinController())->store();
+    });
 
-	$router->get('/logout', function () {
-		if (session_status() !== PHP_SESSION_ACTIVE) {
-			session_start();
-		}
+    // API Stats: Admin only
+    Flight::route('GET /api/stats', function () {
+        requireAuth(['ADMIN']);
+        $controller = new DashboardController(Flight::app());
+        $controller->getStatsJson();
+    });
 
-		session_destroy();
-		Flight::redirect('/');
-	});
+    // DONS: Admin & Client can view/add
+    $router->get('/dons', function () {
+        requireAuth(['ADMIN', 'CLIENT']);
+        (new DonController())->index();
+    });
 
+    $router->post('/dons', function () {
+        requireAuth(['ADMIN', 'CLIENT']);
+        (new DonController())->store();
+    });
 
-	$router->get('/dashboard', function () {
-		requireAuth();
-		(new DashboardController(Flight::app()))->getSummary();
-	});
+    // DISPATCH: Admin only
+    $router->get('/dispatch', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->index();
+    });
+    $router->post('/dispatch/simulate', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->simulate();
+    });
+    $router->post('/dispatch/reset', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->reset();
+    });
+    $router->post('/dispatch/validate', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->validate();
+    });
 
-	$router->get('/region-details', function () {
-		// requireAuth();
-		(new DashboardController(Flight::app()))->regionDetails();
+	$router->post('/dispatch/validateAchat', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->validateAchat();
+    });
+
+    // ACHATS: Admin only
+    $router->get('/achats', function () {
+        requireAuth(['ADMIN']);
+        (new AchatController(Flight::db()))->index();
+    });
+
+	$router->post('/achats', function () {
+		requireAuth(['ADMIN']);
+		(new AchatController(Flight::db()))->store();
 	});
 
 	$router->get('/ville-details', function () {
@@ -67,77 +117,32 @@ $router->group('', function (Router $router) {
 	});
 
 
-
-	$router->get('/besoins', function () {
-		(new BesoinController())->index();
-	});
-
-	$router->post('/besoins', function () {
-		(new BesoinController())->store();
-	});
-
-	Flight::route('GET /api/stats', function () {
-		$controller = new DashboardController(Flight::app());
-		$controller->getStatsJson();
-	});
-	$router->get('/dons', function () {
-		// requireAuth();
-		(new DonController())->index();
-	});
-
-	$router->post('/dons', function () {
-		// requireAdmin();
-		(new DonController())->store();
-	});
-
-	$router->get('/dispatch', [DispatchController::class, 'index']);
-	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
-	$router->post('/dispatch/validate', [DispatchController::class, 'validate']);
-	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
-	$router->post('/dispatch/validateAchat', [DispatchController::class, 'validateAchat']);
-
-
-
-
-	$router->get('/achats', function () {
-		// requireAuth();
-		(new AchatController(Flight::db()))->index();
-	});
-
-	$router->post('/achats', function () {
-		// requireAdmin();
-		(new AchatController(Flight::db()))->store();
-	});
-
-
 	$router->get('/resetData/1234', function () {
 		(new ResetController(Flight::app())->resetData());
 	});
 
+
 }, [SecurityHeadersMiddleware::class]);
 
 
-function requireAuth()
+function requireAuth($roles = [])
 {
-	if (session_status() !== PHP_SESSION_ACTIVE) {
-		session_start();
-	}
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-	if (!isset($_SESSION['user'])) {
-		Flight::redirect('/');
-		exit;
-	}
+    if (!isset($_SESSION['user'])) {
+        Flight::redirect('/');
+        exit;
+    }
+
+    if (!empty($roles) && !in_array($_SESSION['user']['role'], $roles)) {
+        $_SESSION['flash_error'] = "Accès non autorisé.";
+        Flight::redirect('/dashboard');
+        exit;
+    }
 }
+
 
 function requireAdmin()
 {
-	if (session_status() !== PHP_SESSION_ACTIVE) {
-		session_start();
-	}
-
-	if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'ADMIN') {
-		$_SESSION['flash_error'] = "Accès réservé aux administrateurs.";
-		Flight::redirect('/dashboard');
-		exit;
-	}
+    requireAuth(['ADMIN']);
 }
