@@ -28,7 +28,11 @@ function formatDeviseAr($montant)
     <div class="card shadow-sm">
       <div class="card-header bg-body d-flex flex-wrap gap-2 align-items-center justify-content-between">
         <div class="fw-semibold"><i class="bi bi-list-check me-2"></i>Besoins agrégés par article</div>
-        <div class="text-secondary small">Total: <span class="fw-semibold"><?php echo formatDeviseAr($totalMontant ?? 0); ?></span></div>
+        <div class="text-secondary small">
+          Total besoins: <span class="fw-semibold"><?php echo formatDeviseAr($totalMontant ?? 0); ?></span>
+          <span class="mx-1">•</span>
+          Total satisfaits: <span class="fw-semibold"><?php echo formatDeviseAr($totalSatisfait ?? 0); ?></span>
+        </div>
       </div>
 
       <div class="table-responsive">
@@ -40,12 +44,14 @@ function formatDeviseAr($montant)
               <th class="text-end">PU</th>
               <th class="text-end">Quantité totale</th>
               <th class="text-end">Montant total</th>
+              <th class="text-end">Qté satisfaite</th>
+              <th class="text-end">Montant satisfait</th>
             </tr>
           </thead>
           <tbody>
             <?php if (empty($details)) { ?>
               <tr>
-                <td colspan="5" class="text-center text-secondary py-4">Aucun besoin trouvé pour cette ville.</td>
+                <td colspan="7" class="text-center text-secondary py-4">Aucun besoin trouvé pour cette ville.</td>
               </tr>
             <?php } ?>
 
@@ -56,6 +62,8 @@ function formatDeviseAr($montant)
                 <td class="text-end"><?php echo formatDeviseAr($row['pu'] ?? 0); ?></td>
                 <td class="text-end"><?php echo number_format((float) ($row['quantite_total'] ?? 0), 2, ',', ' '); ?></td>
                 <td class="text-end fw-semibold"><?php echo formatDeviseAr($row['montant_total'] ?? 0); ?></td>
+                <td class="text-end"><?php echo number_format((float) ($row['quantite_satisfaite'] ?? 0), 2, ',', ' '); ?></td>
+                <td class="text-end fw-semibold"><?php echo formatDeviseAr($row['montant_satisfait'] ?? 0); ?></td>
               </tr>
             <?php } ?>
           </tbody>

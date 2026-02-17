@@ -143,6 +143,40 @@ class DashboardModel
         $stmt->execute([$villeId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getBesoinsDetailsWithSatisfactionByVille(int $villeId): array
+    {
+        $sql = "
+            SELECT
+                tb.name AS type_besoin,
+                a.name AS article,
+                a.pu AS pu,
+                SUM(bv.quantite) AS quantite_total,
+                SUM(bv.quantite * a.pu) AS montant_total,
+                COALESCE(sat.quantite_satisfaite, 0) AS quantite_satisfaite,
+                (COALESCE(sat.quantite_satisfaite, 0) * a.pu) AS montant_satisfait
+            FROM besoin_ville bv
+            JOIN article a ON a.id_article = bv.id_article
+            JOIN type_besoin tb ON tb.id_type = a.id_type
+            LEFT JOIN (
+                SELECT
+                    d.id_ville,
+                    don.id_article,
+                    SUM(d.quantite_attribuee) AS quantite_satisfaite
+                FROM dispatch d
+                JOIN don don ON don.id_don = d.id_don
+                WHERE d.id_ville = ?
+                GROUP BY d.id_ville, don.id_article
+            ) sat ON sat.id_ville = bv.id_ville AND sat.id_article = bv.id_article
+            WHERE bv.id_ville = ?
+            GROUP BY tb.name, a.id_article, a.name, a.pu, sat.quantite_satisfaite
+            ORDER BY tb.name, a.name
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$villeId, $villeId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getTotalDispatched()
     {
         $sql = "
