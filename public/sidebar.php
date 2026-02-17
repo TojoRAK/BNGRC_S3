@@ -15,6 +15,12 @@
       <a href="/dispatch" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
         <i class="bi bi-diagram-3"></i> Dispatch (simulation)
       </a>
+       <a href="/dons" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+        <i class="bi bi-diagram-3"></i> Dons
+      </a>
+       <a href="/achats" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+        <i class="bi bi-diagram-3"></i>Achats
+      </a>
     </div>
 
     <hr class="my-3">

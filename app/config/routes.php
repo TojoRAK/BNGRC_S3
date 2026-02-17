@@ -75,12 +75,12 @@ $router->group('', function (Router $router) {
 		$controller->getStatsJson();
 	});
 	$router->get('/dons', function () {
-		requireAuth();
+		// requireAuth();
 		(new DonController())->index();
 	});
 
 	$router->post('/dons', function () {
-		requireAdmin();
+		// requireAdmin();
 		(new DonController())->store();
 	});
 
@@ -92,12 +92,12 @@ $router->group('', function (Router $router) {
 
 
 	$router->get('/achats', function () {
-		requireAuth();
+		// requireAuth();
 		(new AchatController(Flight::db()))->index();
 	});
 
 	$router->post('/achats', function () {
-		requireAdmin();
+		// requireAdmin();
 		(new AchatController(Flight::db()))->store();
 	});
 }, [SecurityHeadersMiddleware::class]);
