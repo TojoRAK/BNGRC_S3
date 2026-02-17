@@ -175,7 +175,7 @@ class DispatchModel
         ];
     }
 
-    public function validateSimulation(array $simulation)
+    public function validateSimulation($simulation)
     {
         $allocations = $simulation['allocations'] ?? [];
         if (empty($allocations)) {
@@ -234,7 +234,7 @@ class DispatchModel
                 $reste = $donQty - $used;
 
                 if ($reste <= 0.000001) {
-                    $newStatus = 'DISPATCHE';   // si tu as une constante, utilise-la
+                    $newStatus = 'DISPATCHE';   
                 } else {
                     $newStatus = self::DON_STATUS_PARTIEL;
                 }
