@@ -182,7 +182,6 @@ class DispatchModel
             throw new \Exception("Impossible de valider : aucune allocation à enregistrer.");
         }
 
-        // Pour recalculer les totaux attribués par don / par besoin
         $sumByDon = [];    // id_don => total attribué (dans cette validation)
         $sumByBesoin = []; // id_besoin => total attribué
 
@@ -199,8 +198,8 @@ class DispatchModel
             $this->pdo->beginTransaction();
 
             $sqlInsertDispatch = "
-            INSERT INTO dispatch (id_don, id_ville, quantite_attribuee, date_dispatch)
-            VALUES (?, ?, ?, NOW())
+            INSERT INTO dispatch (id_don, id_besoin, id_ville, quantite_attribuee, date_dispatch)
+            VALUES (?, ?, ?, ?, NOW())
         ";
             $stmtInsert = $this->pdo->prepare($sqlInsertDispatch);
 
@@ -208,6 +207,7 @@ class DispatchModel
             foreach ($allocations as $a) {
                 $stmtInsert->execute([
                     $a['id_don'],
+                    $a['id_besoin'],
                     $a['id_ville'],
                     $a['attribue'],
                 ]);
