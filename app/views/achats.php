@@ -79,7 +79,7 @@ function formatDeviseAr($montant)
                                     <th>PU</th>
                                     <th>Besoin Initial</th>
                                     <th>Quantité Déjà Achetée</th>
-                                    <th>Restant</th>
+                                    <th>Besoins Restant</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

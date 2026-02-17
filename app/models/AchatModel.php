@@ -143,11 +143,22 @@ class AchatModel
             v.name AS ville,
             art.name AS article,
             art.pu,
-            b.quantite AS besoin_initial,
+
+            (
+                SELECT SUM(b2.quantite) 
+                FROM besoin_ville b2 
+                WHERE b2.id_ville = b.id_ville 
+                  AND b2.id_article = b.id_article
+            ) AS besoin_initial,
 
             COALESCE(SUM(al.quantite), 0) AS quantite_achetee,
 
-            b.quantite - COALESCE(SUM(al.quantite), 0) AS restant
+            (
+                SELECT SUM(b2.quantite) 
+                FROM besoin_ville b2 
+                WHERE b2.id_ville = b.id_ville 
+                  AND b2.id_article = b.id_article
+            ) - COALESCE(SUM(al.quantite), 0) AS restant
 
         FROM besoin_ville b
         JOIN ville v ON v.id_ville = b.id_ville
@@ -160,7 +171,7 @@ class AchatModel
             ON al.id_achat = ach.id_achat 
             AND al.id_article = b.id_article
 
-        WHERE art.pu > 1   
+        WHERE art.pu > 1
         GROUP BY b.id_ville, b.id_article
 
         HAVING restant > 0

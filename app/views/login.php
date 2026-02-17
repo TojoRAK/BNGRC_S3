@@ -1,78 +1,84 @@
-<?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-}
-?>
-<!doctype html>
-<html lang="fr" data-bs-theme="light">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Connexion — BNGRC</title>
+<!DOCTYPE html>
+<html lang="fr">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/css/theme.css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-logo {
+            display: block;
+            margin: 0 auto 20px;
+            width: 120px;
+        }
+
+        .user-photo {
+            width: 80px;
+            border-radius: 50%;
+            margin-left: auto;
+            display: block;
+        }
+    </style>
 </head>
 
-<body class="bngrc-app">
-    <div class="container" style="max-width: 520px;">
-        <div class="py-5">
-            <div class="text-center mb-4">
-                <div class="d-inline-flex align-items-center justify-content-center bngrc-logo mb-3">
-                    <i class="bi bi-box2-heart"></i>
-                </div>
-                <h1 class="h4 mb-1">Connexion</h1>
-                <div class="text-secondary small">Accès BNGRC — Dons & Distributions</div>
+<body>
+    <div class="login-container">
+        <img src="/assets/img/bngrc-logo.jpeg" class="login-logo" alt="Logo">
+        <h4 class="text-center mb-4">Connexion</h4>
+
+        <?php if (!empty($_SESSION['flash_error'])): ?>
+            <div class="alert alert-danger"><?php echo $_SESSION['flash_error'];
+                                            unset($_SESSION['flash_error']); ?></div>
+        <?php endif; ?>
+
+        <form method="POST" action="/login">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" id="email" class="form-control" required>
             </div>
 
-            <?php if (!empty($_SESSION['flash_error'])) { ?>
-                <div class="alert alert-danger">
-                    <?php echo htmlspecialchars((string) $_SESSION['flash_error']); ?>
-                </div>
-                <?php unset($_SESSION['flash_error']); ?>
-            <?php } ?>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
 
-            <div class="card bngrc-card">
-                <div class="card-body">
-                    <form method="POST" action="/login" class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Email</label>
-                            <input class="form-control" type="email" name="email" required>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Mot de passe</label>
-                            <input class="form-control" type="password" name="password" required>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Se connecter en tant que</label>
-                            <select class="form-select" name="role" required>
-                                <option value="">-- Choisir --</option>
-                                <option value="CLIENT">Client</option>
-                                <option value="ADMIN">Admin</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 d-grid">
-                            <button class="btn btn-primary" type="submit"><i class="bi bi-box-arrow-in-right me-1"></i>Se connecter</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card-footer bngrc-cardfoot">
-                    <div class="text-secondary small">
-                        <strong>Admin par défaut si aucun admin en base :</strong>
-                        <div>Email: admin@test.com</div>
-                        <div>Password: admin123</div>
-                        <div>Role: ADMIN</div>
-                    </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Rôle</label>
+                <select name="role" id="role" class="form-select" required>
+                    <option value="ADMIN">Admin</option>
+                    <option value="CLIENT">Client</option>
+                </select>
+            </div>
+            <div class="card-footer bngrc-cardfoot">
+                <div class="text-secondary small">
+                    <strong>Admin par défaut si aucun admin en base :</strong>
+                    <div>Email: admin@test.com</div>
+                    <div>Password: admin123</div>
+                    <div>Role: ADMIN</div>
                 </div>
             </div>
-        </div>
+
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+
+            <!-- Optional user photo on the right -->
+            <!-- <img src="/assets/user-placeholder.png" class="user-photo mt-3" alt="User Photo"> -->
+        </form>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
