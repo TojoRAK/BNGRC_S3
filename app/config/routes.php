@@ -91,6 +91,7 @@ $router->group('', function (Router $router) {
 
 	$router->get('/dispatch', [DispatchController::class, 'index']);
 	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
+	$router->post('/dispatch/validate', [DispatchController::class, 'validate']);
 	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
 
 

@@ -1,6 +1,10 @@
 <?php
-function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
-function nf($n): string {
+function e(string $s): string
+{
+  return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+}
+function nf($n): string
+{
   if ($n === null) return '';
   $n = (float)$n;
   // format FR simple
@@ -17,7 +21,7 @@ $coverage = max(0, min(100, $coverage));
   <div class="bngrc-shell">
 
     <!-- Sidebar -->
-    <?php include('inc/sidebar.php')?>
+    <?php include('inc/sidebar.php') ?>
 
     <!-- Main -->
     <div class="bngrc-main">
@@ -43,10 +47,12 @@ $coverage = max(0, min(100, $coverage));
               </button>
             </form>
 
-            <!-- Placeholder validation (à coder plus tard) -->
-            <button class="btn btn-sm btn-success" type="button" disabled>
-              <i class="bi bi-check2-circle me-1"></i> Valider
-            </button>
+            <form method="post" action="/dispatch/validate" class="d-inline">
+              <button class="btn btn-sm btn-success" type="submit" <?php if (empty($allocations)) echo "disabled" ?>>
+                <i class="bi bi-check2-circle me-1"></i> Valider
+              </button>
+            </form>
+
 
             <form method="post" action="/dispatch/reset" class="d-inline">
               <button class="btn btn-sm btn-outline-danger" type="submit">
@@ -137,8 +143,7 @@ $coverage = max(0, min(100, $coverage));
                       data-bs-toggle="collapse"
                       data-bs-target="#dispatchDonsCollapse"
                       aria-expanded="false"
-                      aria-controls="dispatchDonsCollapse"
-                    >
+                      aria-controls="dispatchDonsCollapse">
                       <i class="bi bi-chevron-down me-1"></i>
                       <span data-dispatch-btn-label>Afficher</span>
                     </button>
@@ -146,53 +151,53 @@ $coverage = max(0, min(100, $coverage));
                 </div>
               </div>
 
-              <div id="dispatchDonsCollapse" class="collapse" data-bs-parent="#dispatchAccordion" data-dispatch-collapse>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table bngrc-table align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th class="ps-3">Don</th>
-                        <th>Article</th>
-                        <th class="text-end">Quantité</th>
-                        <th>Date</th>
-                        <th class="text-end pe-3">Statut</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($dons as $d): ?>
+              <div id="dispatchDonsCollapse" class="collapse" data-dispatch-collapse>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table bngrc-table align-middle mb-0">
+                      <thead>
                         <tr>
-                          <td class="ps-3">
-                            <div class="fw-semibold">DON-<?= str_pad((string)$d['id_don'], 4, '0', STR_PAD_LEFT) ?></div>
-                            <div class="text-secondary small"><?= e($d['source'] ?? '—') ?></div>
-                          </td>
-                          <td>
-                            <span class="badge bngrc-tag bngrc-tag-nature me-2">Article</span>
-                            <?= e($d['article_name'] ?? ('ID #' . (int)$d['id_article'])) ?>
-                          </td>
-                          <td class="text-end fw-semibold"><?= nf($d['quantite']) ?></td>
-                          <td class="text-secondary"><?= e($d['date_don']) ?></td>
-                          <td class="text-end pe-3">
-                            <span class="badge bngrc-status bngrc-status-wait"><?= e($d['status'] ?? '—') ?></span>
-                          </td>
+                          <th class="ps-3">Don</th>
+                          <th>Article</th>
+                          <th class="text-end">Quantité</th>
+                          <th>Date</th>
+                          <th class="text-end pe-3">Statut</th>
                         </tr>
-                      <?php endforeach; ?>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($dons as $d): ?>
+                          <tr>
+                            <td class="ps-3">
+                              <div class="fw-semibold">DON-<?= str_pad((string)$d['id_don'], 4, '0', STR_PAD_LEFT) ?></div>
+                              <div class="text-secondary small"><?= e($d['source'] ?? '—') ?></div>
+                            </td>
+                            <td>
+                              <span class="badge bngrc-tag bngrc-tag-nature me-2">Article</span>
+                              <?= e($d['article_name'] ?? ('ID #' . (int)$d['id_article'])) ?>
+                            </td>
+                            <td class="text-end fw-semibold"><?= nf($d['quantite']) ?></td>
+                            <td class="text-secondary"><?= e($d['date_don']) ?></td>
+                            <td class="text-end pe-3">
+                              <span class="badge bngrc-status bngrc-status-wait"><?= e($d['status'] ?? '—') ?></span>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
 
-                      <?php if (empty($dons)): ?>
-                        <tr>
-                          <td colspan="5" class="text-center text-secondary py-4">Aucun don disponible.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
+                        <?php if (empty($dons)): ?>
+                          <tr>
+                            <td colspan="5" class="text-center text-secondary py-4">Aucun don disponible.</td>
+                          </tr>
+                        <?php endif; ?>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
 
-              <div class="card-footer bngrc-cardfoot">
-                <div class="text-secondary small">
-                  <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_don</strong> puis <strong>id_don</strong>.
+                <div class="card-footer bngrc-cardfoot">
+                  <div class="text-secondary small">
+                    <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_don</strong> puis <strong>id_don</strong>.
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
@@ -211,8 +216,7 @@ $coverage = max(0, min(100, $coverage));
                       data-bs-toggle="collapse"
                       data-bs-target="#dispatchBesoinsCollapse"
                       aria-expanded="false"
-                      aria-controls="dispatchBesoinsCollapse"
-                    >
+                      aria-controls="dispatchBesoinsCollapse">
                       <i class="bi bi-chevron-down me-1"></i>
                       <span data-dispatch-btn-label>Afficher</span>
                     </button>
@@ -220,49 +224,49 @@ $coverage = max(0, min(100, $coverage));
                 </div>
               </div>
 
-              <div id="dispatchBesoinsCollapse" class="collapse" data-bs-parent="#dispatchAccordion" data-dispatch-collapse>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table bngrc-table align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th class="ps-3">Ville</th>
-                        <th>Article</th>
-                        <th class="text-end">Quantité</th>
-                        <th class="pe-3">Saisie</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($besoins as $b): ?>
+              <div id="dispatchBesoinsCollapse" class="collapse" data-dispatch-collapse>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table bngrc-table align-middle mb-0">
+                      <thead>
                         <tr>
-                          <td class="ps-3">
-                            <div class="fw-semibold"><?= e($b['ville_name'] ?? ('Ville #' . (int)$b['id_ville'])) ?></div>
-                            <div class="text-secondary small">Besoin #<?= (int)$b['id_besoin'] ?></div>
-                          </td>
-                          <td>
-                            <span class="badge bngrc-tag bngrc-tag-mat me-2">Article</span>
-                            <?= e($b['article_name'] ?? ('ID #' . (int)$b['id_article'])) ?>
-                          </td>
-                          <td class="text-end fw-semibold"><?= nf($b['quantite']) ?></td>
-                          <td class="text-secondary pe-3"><?= e($b['date_saisie']) ?></td>
+                          <th class="ps-3">Ville</th>
+                          <th>Article</th>
+                          <th class="text-end">Quantité</th>
+                          <th class="pe-3">Saisie</th>
                         </tr>
-                      <?php endforeach; ?>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($besoins as $b): ?>
+                          <tr>
+                            <td class="ps-3">
+                              <div class="fw-semibold"><?= e($b['ville_name'] ?? ('Ville #' . (int)$b['id_ville'])) ?></div>
+                              <div class="text-secondary small">Besoin #<?= (int)$b['id_besoin'] ?></div>
+                            </td>
+                            <td>
+                              <span class="badge bngrc-tag bngrc-tag-mat me-2">Article</span>
+                              <?= e($b['article_name'] ?? ('ID #' . (int)$b['id_article'])) ?>
+                            </td>
+                            <td class="text-end fw-semibold"><?= nf($b['quantite']) ?></td>
+                            <td class="text-secondary pe-3"><?= e($b['date_saisie']) ?></td>
+                          </tr>
+                        <?php endforeach; ?>
 
-                      <?php if (empty($besoins)): ?>
-                        <tr>
-                          <td colspan="4" class="text-center text-secondary py-4">Aucun besoin ouvert.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
+                        <?php if (empty($besoins)): ?>
+                          <tr>
+                            <td colspan="4" class="text-center text-secondary py-4">Aucun besoin ouvert.</td>
+                          </tr>
+                        <?php endif; ?>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
 
-              <div class="card-footer bngrc-cardfoot">
-                <div class="text-secondary small">
-                  <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_saisie</strong> puis <strong>id_besoin</strong>.
+                <div class="card-footer bngrc-cardfoot">
+                  <div class="text-secondary small">
+                    <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_saisie</strong> puis <strong>id_besoin</strong>.
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
@@ -351,7 +355,9 @@ $coverage = max(0, min(100, $coverage));
         <form method="post" action="/dispatch/simulate">
           <button class="btn btn-primary w-100" type="submit"><i class="bi bi-play-fill me-1"></i> Simuler</button>
         </form>
-        <button class="btn btn-success w-100" type="button" disabled><i class="bi bi-check2-circle me-1"></i> Valider</button>
+        <form method="post" action="/dispatch/validate">
+          <button class="btn btn-success w-100" type="submit" <?php if (empty($allocations)) echo "disabled" ?>><i class="bi bi-check2-circle me-1"></i> Valider</button>
+        </form>
         <form method="post" action="/dispatch/reset">
           <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset</button>
         </form>
@@ -370,4 +376,5 @@ $coverage = max(0, min(100, $coverage));
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/assets/js/dispatch.js"></script>
 </body>
+
 </html>

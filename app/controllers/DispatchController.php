@@ -49,9 +49,30 @@ class DispatchController
         exit;
     }
 
+    public function validate()
+    {
+        try {
+            $simulation = $this->model->simulateDispatch();
+
+            $result = $this->model->validateSimulation($simulation);
+
+            
+
+        } catch (\Throwable $e) {
+
+            Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
+        }
+
+        Flight::redirect('/dispatch');
+        exit;
+    }
+
+
 
     public function reset()
     {
-        $this->index();
+        Flight::redirect('/dispatch');
+        exit;
+        // $this->index();  
     }
 }
