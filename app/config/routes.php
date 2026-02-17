@@ -93,6 +93,7 @@ $router->group('', function (Router $router) {
 	$router->post('/dispatch/simulate', [DispatchController::class, 'simulate']);
 	$router->post('/dispatch/validate', [DispatchController::class, 'validate']);
 	$router->post('/dispatch/reset', [DispatchController::class, 'reset']);
+	$router->post('/dispatch/validate', [DispatchController::class, 'validate']);
 
 
 
