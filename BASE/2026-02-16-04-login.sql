@@ -9,8 +9,10 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-echo password_hash('admin123', PASSWORD_DEFAULT);
-INSERT INTO Users (username, email, password_hash, role)
-VALUES ('admin', 'admin@test.com', 'HASH_ICI', 'ADMIN');
 admin@test.com
 admin123
+
+
+
+INSERT INTO Users (username, email, password_hash, role)
+VALUES ('admin', 'admin@test.com', '$2y$12$6umL4rgJdi/XEdZ8R50QzO/3N9qMN7VfTE01Y8V7szdmbl5tUVqOu', 'ADMIN');
