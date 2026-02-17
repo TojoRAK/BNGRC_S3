@@ -103,16 +103,19 @@ class DashboardController
             return;
         }
 
-        $details = $model->getBesoinsDetailsByVille($villeId);
+        $details = $model->getBesoinsDetailsWithSatisfactionByVille($villeId);
         $totalMontant = 0;
+        $totalSatisfait = 0;
         foreach ($details as $row) {
             $totalMontant += (float) ($row['montant_total'] ?? 0);
+            $totalSatisfait += (float) ($row['montant_satisfait'] ?? 0);
         }
 
         Flight::render('dashboard/ville_details', [
             'ville' => $villeRow,
             'details' => $details,
             'totalMontant' => $totalMontant,
+            'totalSatisfait' => $totalSatisfait,
         ]);
     }
     public function getStatsJson()

@@ -48,6 +48,8 @@ $coverage = max(0, min(100, $coverage));
               <select name="mode_dispatch" id="">
                 <option value="1">FIFO</option>
                 <option value="2">Croissant</option>
+                <option value="3">Prorata</option>
+
 
               </select>
               <button class="btn btn-sm btn-primary" type="submit">

@@ -78,13 +78,32 @@ class DispatchModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function simulateDispatchCroissants()
+    private function applyStrategy(array $besoins, string $strategy): array
+    {
+        switch ($strategy) {
+            case 'FIFO':
+                return $besoins;
+
+            case 'BESOIN_CROISSANT':
+                uasort($besoins, function ($a, $b) {
+                    return $a['quantite'] <=> $b['quantite'];
+                });
+                return $besoins;
+            case 'PRORATA':
+                return $besoins;
+
+            default:
+                throw new \InvalidArgumentException(
+                    "Stratégie inconnue : {$strategy}. " .
+                    "Stratégies disponibles : FIFO, BESOIN_CROISSANT, BESOIN_DECROISSANT, VILLE_ALPHABETIQUE, URGENCE"
+                );
+        }
+    }
+                
+    private function simulateDispatchProrata(): array
     {
         $dons = $this->getDonDisponible();
         $besoins = $this->getBesoinOuvert();
-        uasort($besoins, function ($a, $b) {
-            return $a['quantite'] <=> $b['quantite'];
-        });
 
         $donRemaining = [];
         foreach ($dons as $d) {
@@ -103,37 +122,130 @@ class DispatchModel
             $idDon = (int) $don['id_don'];
             $idArticle = (int) $don['id_article'];
 
-            $resteDon = $donRemaining[$idDon] ?? 0.0;
-            if ($resteDon <= 0) {
+            $resteDonFloat = $donRemaining[$idDon] ?? 0.0;
+            if ($resteDonFloat <= 0) {
                 continue;
             }
 
+            $donUnits = (int) floor($resteDonFloat);
+            if ($donUnits <= 0) {
+                continue;
+            }
+
+            $matching = [];
+            $totalNeed = 0.0;
             foreach ($besoins as $besoin) {
-                if ($resteDon <= 0) {
-                    break;
+                if ((int) $besoin['id_article'] !== $idArticle) {
+                    continue;
                 }
 
                 $idBesoin = (int) $besoin['id_besoin'];
-                $idArticleBesoin = (int) $besoin['id_article'];
-
-                if ($idArticleBesoin !== $idArticle) {
+                $resteBesoinFloat = $besoinRemaining[$idBesoin] ?? 0.0;
+                if ($resteBesoinFloat <= 0) {
                     continue;
                 }
 
-                $resteBesoin = $besoinRemaining[$idBesoin] ?? 0.0;
-                if ($resteBesoin <= 0) {
+                $matching[] = [
+                    'besoin' => $besoin,
+                    'id_besoin' => $idBesoin,
+                    'resteBesoin' => $resteBesoinFloat,
+                    'capUnits' => (int) floor($resteBesoinFloat),
+                ];
+                $totalNeed += $resteBesoinFloat;
+            }
+
+            if ($totalNeed <= 0 || empty($matching)) {
+                continue;
+            }
+
+            $baseAlloc = [];       
+            $fractionals = [];     
+            $capUnitsByBesoin = [];  
+            $sumBase = 0;
+            foreach ($matching as $m) {
+                $idBesoin = (int) $m['id_besoin'];
+                $cap = (int) $m['capUnits'];
+
+                $exact = ($donUnits * (float) $m['resteBesoin']) / $totalNeed;
+                $base = (int) floor($exact);
+
+                if ($base > $cap) {
+                    $base = $cap;
+                }
+
+                $baseAlloc[$idBesoin] = $base;
+                $fractionals[$idBesoin] = $exact - floor($exact);
+                $capUnitsByBesoin[$idBesoin] = $cap;
+                $sumBase += $base;
+            }
+
+            $left = $donUnits - $sumBase;
+
+            if ($left > 0) {
+                $candidates = [];
+                foreach ($matching as $m) {
+                    $idBesoin = (int) $m['id_besoin'];
+                    $headroom = ($capUnitsByBesoin[$idBesoin] ?? 0) - ($baseAlloc[$idBesoin] ?? 0);
+                    if ($headroom <= 0) {
+                        continue;
+                    }
+
+                    $candidates[] = [
+                        'id_besoin' => $idBesoin,
+                        'fraction' => (float) ($fractionals[$idBesoin] ?? 0.0),
+                        'date_saisie' => (string) ($m['besoin']['date_saisie'] ?? ''),
+                    ];
+                }
+
+                usort($candidates, function (array $a, array $b): int {
+                    if ($a['fraction'] === $b['fraction']) {
+                        if ($a['date_saisie'] === $b['date_saisie']) {
+                            return $a['id_besoin'] <=> $b['id_besoin'];
+                        }
+                        return $a['date_saisie'] <=> $b['date_saisie'];
+                    }
+                    return ($a['fraction'] < $b['fraction']) ? 1 : -1;
+                });
+
+                while ($left > 0 && !empty($candidates)) {
+                    $distributedThisPass = 0;
+                    foreach ($candidates as $c) {
+                        if ($left <= 0) {
+                            break;
+                        }
+
+                        $idBesoin = (int) $c['id_besoin'];
+                        $headroom = ($capUnitsByBesoin[$idBesoin] ?? 0) - ($baseAlloc[$idBesoin] ?? 0);
+                        if ($headroom <= 0) {
+                            continue;
+                        }
+
+                        $baseAlloc[$idBesoin] = ($baseAlloc[$idBesoin] ?? 0) + 1;
+                        $left--;
+                        $distributedThisPass++;
+                    }
+
+                    if ($distributedThisPass === 0) {
+                        break;
+                    }
+                }
+            }
+
+            foreach ($matching as $m) {
+                $idBesoin = (int) $m['id_besoin'];
+                $attribue = (int) ($baseAlloc[$idBesoin] ?? 0);
+                if ($attribue <= 0) {
                     continue;
                 }
 
-                $attribue = min($resteDon, $resteBesoin);
+                $besoin = $m['besoin'];
 
-                $resteDon -= $attribue;
-                $resteBesoin -= $attribue;
+                $resteDonFloat -= $attribue;
+                $resteBesoinAfter = ($besoinRemaining[$idBesoin] ?? 0.0) - $attribue;
 
-                $donRemaining[$idDon] = $resteDon;
-                $besoinRemaining[$idBesoin] = $resteBesoin;
+                $donRemaining[$idDon] = $resteDonFloat;
+                $besoinRemaining[$idBesoin] = $resteBesoinAfter;
 
-                // ligne utilse et afficher
                 $allocations[] = [
                     'id_don' => $idDon,
                     'besoin' => $besoin,
@@ -141,12 +253,13 @@ class DispatchModel
                     'ville_name' => $besoin['ville_name'] ?? null,
                     'id_article' => $idArticle,
                     'article_name' => $don['article_name'] ?? ($besoin['article_name'] ?? null),
-                    'attribue' => $attribue,
+                    'type_besoin_name' => $don['type_besoin_name'] ?? ($besoin['type_besoin_name'] ?? null),
+                    'attribue' => (float) $attribue,
 
                     'date_don' => $don['date_don'],
                     'date_saisie' => $besoin['date_saisie'],
-                    'reste_don' => $resteDon,
-                    'reste_besoin' => $resteBesoin,
+                    'reste_don' => $resteDonFloat,
+                    'reste_besoin' => $resteBesoinAfter,
                 ];
                 $nbAlloc++;
             }
@@ -176,11 +289,16 @@ class DispatchModel
         ];
     }
 
-    public function simulateDispatch(): array
+
+    public function simulateDispatch(string $strategy = 'FIFO'): array
     {
+        if ($strategy === 'PRORATA') {
+            return $this->simulateDispatchProrata();
+        }
         $dons = $this->getDonDisponible();
         $besoins = $this->getBesoinOuvert();
 
+        $besoins = $this->applyStrategy($besoins, $strategy);
         $donRemaining = [];
         foreach ($dons as $d) {
             $donRemaining[(int) $d['id_don']] = (float) $d['quantite'];
@@ -283,9 +401,9 @@ class DispatchModel
         $sumByBesoin = [];
 
         foreach ($allocations as $a) {
-            $idDon    = (int)($a['id_don']    ?? 0);
-            $idBesoin = (int)($a['id_besoin'] ?? 0);
-            $qty      = (float)($a['attribue'] ?? 0);
+            $idDon = (int) ($a['id_don'] ?? 0);
+            $idBesoin = (int) ($a['id_besoin'] ?? 0);
+            $qty = (float) ($a['attribue'] ?? 0);
 
             $sumByDon[$idDon]       = ($sumByDon[$idDon]       ?? 0) + $qty;
             $sumByBesoin[$idBesoin] = ($sumByBesoin[$idBesoin] ?? 0) + $qty;
@@ -329,10 +447,18 @@ class DispatchModel
                 if (!$donRow) {
                     throw new \Exception("Don introuvable: id_don={$idDon}");
                 }
+                $donQty = (float) $donRow['quantite'];
 
                 $stmtDonSumDispatch->execute([$idDon]);
-                $used  = (float)$stmtDonSumDispatch->fetchColumn();
-                $reste = (float)$donRow['quantite'] - $used;
+                $used = (float) ($stmtDonSumDispatch->fetch(PDO::FETCH_ASSOC)['used'] ?? 0);
+
+                $reste = $donQty - $used;
+
+                if ($reste <= 0.000001) {
+                    $newStatus = 'DISPATCHE';
+                } else {
+                    $newStatus = self::DON_STATUS_PARTIEL;
+                }
 
                 $newStatus = ($reste <= 0.000001) ? 'DISPATCHE' : self::DON_STATUS_PARTIEL;
                 $stmtUpdateDon->execute([$newStatus, $idDon]);
@@ -352,13 +478,15 @@ class DispatchModel
             foreach (array_keys($sumByBesoin) as $idBesoin) {
                 $stmtBesoinQty->execute([$idBesoin]);
                 $bRow = $stmtBesoinQty->fetch(PDO::FETCH_ASSOC);
-                if (!$bRow) {
+                if (!$bRow)
                     throw new \Exception("Besoin introuvable: id_besoin={$idBesoin}");
-                }
+                $bQty = (float) $bRow['quantite'];
 
                 $stmtBesoinSum->execute([$idBesoin]);
-                $used  = (float)$stmtBesoinSum->fetchColumn();
-                $reste = (float)$bRow['quantite'] - $used;
+                $used = (float) ($stmtBesoinSum->fetch(PDO::FETCH_ASSOC)['used'] ?? 0);
+
+                $reste = $bQty - $used;
+                $newStatus = ($reste <= 0.000001) ? "satisfait" : self::BESOIN_STATUS_PARTIEL;
 
                 $newStatus = ($reste <= 0.000001) ? 'satisfait' : self::BESOIN_STATUS_PARTIEL;
                 $stmtUpdateBesoin->execute([$newStatus, $idBesoin]);

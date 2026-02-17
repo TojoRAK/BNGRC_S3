@@ -47,12 +47,13 @@ class DispatchController
         $mode = isset($_POST['mode_dispatch']) ? trim((string) $_POST['mode_dispatch']) : '1';
 
         if ($mode === '2') {
-            $data = $this->model->simulateDispatchCroissants();
-        } else {
+            $data = $this->model->simulateDispatch("BESOIN_CROISSANT");
+        } elseif ($mode==='1') {
             $data = $this->model->simulateDispatch();
+        }elseif($mode ==='3'){
+            $data = $this->model->simulateDispatch('PRORATA');
         }
 
-        // Sécurité: si jamais un mode non prévu renvoie un tableau vide
         if (empty($data) || !isset($data['dons'], $data['besoins'])) {
             $dons = $this->model->getDonDisponible();
             $besoins = $this->model->getBesoinOuvert();
