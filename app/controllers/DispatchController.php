@@ -4,6 +4,7 @@ namespace app\controllers;
 
 
 use app\models\DispatchModel;
+use app\models\AchatModel;
 use Flight;
 
 class DispatchController
@@ -53,5 +54,21 @@ class DispatchController
     public function reset()
     {
         $this->index();
+    }
+
+    public function validate()
+    {
+        $id_achat = $_POST['id_achat'] ?? null;
+        if (!$id_achat) {
+            Flight::halt(400, "id_achat manquant.");
+        }
+
+        try {
+            $achatModel = new AchatModel(Flight::db());
+            $achatModel->dispatcherAchat((int)$id_achat);
+            Flight::redirect('/achats');
+        } catch (\Exception $e) {
+            Flight::halt(500, $e->getMessage());
+        }
     }
 }

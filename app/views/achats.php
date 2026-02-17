@@ -80,6 +80,7 @@ function formatDeviseAr($montant)
                                     <th>Besoin Initial</th>
                                     <th>Quantité Déjà Achetée</th>
                                     <th>Restant</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,6 +92,24 @@ function formatDeviseAr($montant)
                                         <td><?= $b['besoin_initial'] ?></td>
                                         <td><?= $b['quantite_achetee'] ?></td>
                                         <td><?= $b['restant'] ?></td>
+                                        <td>
+                                            <form method="POST" action="/achats" class="d-flex">
+                                                <input type="hidden" name="ville_id" value="<?= $b['id_ville'] ?>">
+                                                <input type="hidden" name="article_id" value="<?= $b['id_article'] ?>">
+
+                                                <input type="number"
+                                                    name="quantite"
+                                                    step="0.01"
+                                                    max="<?= $b['restant'] ?>"
+                                                    class="form-control form-control-sm me-2"
+                                                    required>
+
+                                                <button class="btn btn-sm btn-success">
+                                                    Acheter
+                                                </button>
+                                            </form>
+                                        </td>
+
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -120,6 +139,8 @@ function formatDeviseAr($montant)
                                     <th>Total TTC</th>
                                     <th>Taux Frais (%)</th>
                                     <th>Date Achat</th>
+                                    <th>Action</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,6 +155,17 @@ function formatDeviseAr($montant)
                                         <td><?= formatDeviseAr($a['total_ttc']) ?></td>
                                         <td><?= $a['taux_frais'] ?></td>
                                         <td><?= $a['date_achat'] ?></td>
+                                        <td>
+                                            <?php if (!$a['deja_dispatche']): ?>
+                                                <form method="POST" action="/dispatch/validate">
+                                                    <input type="hidden" name="id_achat" value="<?= $a['id_achat'] ?>">
+                                                    <button class="btn btn-sm btn-warning">Dispatcher</button>
+                                                </form>
+                                            <?php else: ?>
+                                                <span class="badge bg-success">Dispatché</span>
+                                            <?php endif; ?>
+                                        </td>
+
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

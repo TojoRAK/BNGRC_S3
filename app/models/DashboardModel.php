@@ -108,15 +108,34 @@ class DashboardModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getTotalDispatched()
-    {
-        $sql = "
-        SELECT SUM(d.quantite_attribuee * a.pu)
-        FROM dispatch d
-        JOIN don don ON d.id_don = don.id_don
-        JOIN article a ON don.id_article = a.id_article
+{
+    $sql = "
+        SELECT SUM(montant) FROM (
+
+            -- Don-based dispatches: quantity × article unit price
+            SELECT d.quantite_attribuee * a.pu AS montant
+            FROM dispatch d
+            JOIN don dn ON d.id_don = dn.id_don
+            JOIN article a ON dn.id_article = a.id_article
+            WHERE d.id_don IS NOT NULL
+
+            UNION ALL
+
+            -- Achat-based dispatches: quantity × article unit price from achat_ligne
+            SELECT d.quantite_attribuee * al.pu AS montant
+            FROM dispatch d
+            JOIN achat_ligne al 
+                ON al.id_achat = d.id_achat 
+                AND al.id_article = (
+                    SELECT id_article FROM besoin_ville 
+                    WHERE id_besoin = d.id_besoin
+                )
+            WHERE d.id_achat IS NOT NULL
+
+        ) AS combined
     ";
-        $stmt = $this->pdo->query($sql);
-        return $stmt->fetchColumn();
-    }
+    $stmt = $this->pdo->query($sql);
+    return $stmt->fetchColumn();
+}
 
 }

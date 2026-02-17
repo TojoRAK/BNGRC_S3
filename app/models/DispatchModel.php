@@ -182,25 +182,25 @@ class DispatchModel
             throw new \Exception("Impossible de valider : aucune allocation à enregistrer.");
         }
 
-        // Pour recalculer les totaux attribués par don / par besoin
-        $sumByDon = [];    // id_don => total attribué (dans cette validation)
-        $sumByBesoin = []; // id_besoin => total attribué
+        $sumByDon    = [];
+        $sumByBesoin = [];
 
         foreach ($allocations as $a) {
-            $idDon = (int)($a['id_don'] ?? 0);
+            $idDon    = (int)($a['id_don']    ?? 0);
             $idBesoin = (int)($a['id_besoin'] ?? 0);
-            $qty = (float)($a['attribue'] ?? 0);
+            $qty      = (float)($a['attribue'] ?? 0);
 
-            $sumByDon[$idDon] = ($sumByDon[$idDon] ?? 0) + $qty;
+            $sumByDon[$idDon]       = ($sumByDon[$idDon]       ?? 0) + $qty;
             $sumByBesoin[$idBesoin] = ($sumByBesoin[$idBesoin] ?? 0) + $qty;
         }
 
         try {
             $this->pdo->beginTransaction();
 
+            // id_achat = NULL for don-based dispatches
             $sqlInsertDispatch = "
-            INSERT INTO dispatch (id_don, id_ville, quantite_attribuee, date_dispatch)
-            VALUES (?, ?, ?, NOW())
+            INSERT INTO dispatch (id_don, id_achat, id_ville, id_besoin, quantite_attribuee, date_dispatch)
+            VALUES (?, NULL, ?, ?, ?, NOW())
         ";
             $stmtInsert = $this->pdo->prepare($sqlInsertDispatch);
 
@@ -209,59 +209,60 @@ class DispatchModel
                 $stmtInsert->execute([
                     $a['id_don'],
                     $a['id_ville'],
+                    $a['id_besoin'],   // <-- was missing before
                     $a['attribue'],
                 ]);
                 $nbDispatchInserted++;
             }
 
-            $stmtDonQty = $this->pdo->prepare("SELECT quantite FROM don WHERE id_don = ? FOR UPDATE");
-            $stmtDonSumDispatch = $this->pdo->prepare("SELECT COALESCE(SUM(quantite_attribuee),0) AS used FROM dispatch WHERE id_don = ?");
+            // Update don statuses (unchanged logic, just kept here for completeness)
+            $stmtDonQty        = $this->pdo->prepare("SELECT quantite FROM don WHERE id_don = ? FOR UPDATE");
+            $stmtDonSumDispatch = $this->pdo->prepare("
+            SELECT COALESCE(SUM(quantite_attribuee), 0) AS used 
+            FROM dispatch 
+            WHERE id_don = ?
+        ");
             $stmtUpdateDon = $this->pdo->prepare("UPDATE don SET statut = ? WHERE id_don = ?");
 
             $nbDonUpdated = 0;
             foreach (array_keys($sumByDon) as $idDon) {
-
                 $stmtDonQty->execute([$idDon]);
                 $donRow = $stmtDonQty->fetch(PDO::FETCH_ASSOC);
                 if (!$donRow) {
                     throw new \Exception("Don introuvable: id_don={$idDon}");
                 }
-                $donQty = (float)$donRow['quantite'];
 
                 $stmtDonSumDispatch->execute([$idDon]);
-                $used = (float)($stmtDonSumDispatch->fetch(PDO::FETCH_ASSOC)['used'] ?? 0);
+                $used  = (float)$stmtDonSumDispatch->fetchColumn();
+                $reste = (float)$donRow['quantite'] - $used;
 
-                $reste = $donQty - $used;
-
-                if ($reste <= 0.000001) {
-                    $newStatus = 'DISPATCHE';   
-                } else {
-                    $newStatus = self::DON_STATUS_PARTIEL;
-                }
-
+                $newStatus = ($reste <= 0.000001) ? 'DISPATCHE' : self::DON_STATUS_PARTIEL;
                 $stmtUpdateDon->execute([$newStatus, $idDon]);
                 $nbDonUpdated++;
             }
 
-            $nbBesoinUpdated = 0;
-
-
-            $stmtBesoinQty = $this->pdo->prepare("SELECT quantite FROM besoin_ville WHERE id_besoin = ? FOR UPDATE");
-            $stmtBesoinSum = $this->pdo->prepare("SELECT COALESCE(SUM(quantite_attribuee),0) AS used FROM dispatch WHERE id_besoin = ?");
+            // Update besoin statuses
+            $stmtBesoinQty  = $this->pdo->prepare("SELECT quantite FROM besoin_ville WHERE id_besoin = ? FOR UPDATE");
+            $stmtBesoinSum  = $this->pdo->prepare("
+            SELECT COALESCE(SUM(quantite_attribuee), 0) AS used 
+            FROM dispatch 
+            WHERE id_besoin = ?
+        ");
             $stmtUpdateBesoin = $this->pdo->prepare("UPDATE besoin_ville SET status = ? WHERE id_besoin = ?");
 
+            $nbBesoinUpdated = 0;
             foreach (array_keys($sumByBesoin) as $idBesoin) {
                 $stmtBesoinQty->execute([$idBesoin]);
                 $bRow = $stmtBesoinQty->fetch(PDO::FETCH_ASSOC);
-                if (!$bRow) throw new \Exception("Besoin introuvable: id_besoin={$idBesoin}");
-                $bQty = (float)$bRow['quantite'];
+                if (!$bRow) {
+                    throw new \Exception("Besoin introuvable: id_besoin={$idBesoin}");
+                }
 
                 $stmtBesoinSum->execute([$idBesoin]);
-                $used = (float)($stmtBesoinSum->fetch(PDO::FETCH_ASSOC)['used'] ?? 0);
+                $used  = (float)$stmtBesoinSum->fetchColumn();
+                $reste = (float)$bRow['quantite'] - $used;
 
-                $reste = $bQty - $used;
-                $newStatus = ($reste <= 0.000001) ? "satisfait" : self::BESOIN_STATUS_PARTIEL;
-
+                $newStatus = ($reste <= 0.000001) ? 'satisfait' : self::BESOIN_STATUS_PARTIEL;
                 $stmtUpdateBesoin->execute([$newStatus, $idBesoin]);
                 $nbBesoinUpdated++;
             }
@@ -270,8 +271,8 @@ class DispatchModel
 
             return [
                 'dispatch_inserted' => $nbDispatchInserted,
-                'dons_updated' => $nbDonUpdated,
-                'besoins_updated' => $nbBesoinUpdated,
+                'dons_updated'      => $nbDonUpdated,
+                'besoins_updated'   => $nbBesoinUpdated,
             ];
         } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {
