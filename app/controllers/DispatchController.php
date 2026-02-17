@@ -56,12 +56,8 @@ class DispatchController
 
             $result = $this->model->validateSimulation($simulation);
 
-            Flight::flash(
-                'success',
-                "Dispatch validé : {$result['dispatch_inserted']} attributions enregistrées, "
-                    . "{$result['dons_updated']} dons mis à jour, "
-                    . "{$result['besoins_updated']} besoins mis à jour."
-            );
+            
+
         } catch (\Throwable $e) {
 
             Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
@@ -75,6 +71,8 @@ class DispatchController
 
     public function reset()
     {
-        $this->index();
+        Flight::redirect('/dispatch');
+        exit;
+        // $this->index();  
     }
 }
