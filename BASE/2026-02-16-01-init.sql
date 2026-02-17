@@ -64,7 +64,7 @@ CREATE TABLE besoin_ville (
   CONSTRAINT fk_besoin_article
     FOREIGN KEY (id_article) REFERENCES article(id_article)
     ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT chk_besoin_quantite_positive CHECK (quantite > 0)
+  CONSTRAINT chk_don_quantite_non_negative CHECK (quantite >= 0)
 );
 
 CREATE TABLE don (
@@ -78,7 +78,7 @@ CREATE TABLE don (
   CONSTRAINT fk_don_article
     FOREIGN KEY (id_article) REFERENCES article(id_article)
     ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT chk_don_quantite_positive CHECK (quantite > 0)
+  CONSTRAINT chk_don_quantite_non_negative CHECK (quantite >= 0)
 );
 
 CREATE TABLE dispatch (
