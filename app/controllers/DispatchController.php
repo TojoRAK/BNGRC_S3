@@ -90,7 +90,7 @@ class DispatchController
 
         } catch (\Throwable $e) {
 
-            Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
+            // Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
         }
 
         Flight::redirect('/dispatch');
