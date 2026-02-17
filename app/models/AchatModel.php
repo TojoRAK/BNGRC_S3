@@ -69,11 +69,12 @@ class AchatModel
         LEFT JOIN achat_ligne al 
             ON al.id_achat = ach.id_achat 
             AND al.id_article = b.id_article
-        WHERE b.id_ville = ? AND b.id_article = ?
+        WHERE b.id_ville = ? 
+          AND b.id_article = ?
+          AND b.status != 'satisfait'   -- add this
         GROUP BY b.id_besoin, b.quantite
     ");
         $stmt->execute([$id_ville, $id_article]);
-        // Sum across multiple besoin rows if they exist
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return array_sum($rows);
     }
