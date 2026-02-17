@@ -5,13 +5,14 @@ function e(string $s): string
 }
 function nf($n): string
 {
-  if ($n === null) return '';
-  $n = (float)$n;
+  if ($n === null)
+    return '';
+  $n = (float) $n;
   // format FR simple
   return number_format($n, 0, ',', ' ');
 }
 
-$coverage = (float)($stats['coverage_percent'] ?? 0);
+$coverage = (float) ($stats['coverage_percent'] ?? 0);
 $coverage = max(0, min(100, $coverage));
 ?>
 <?php include('inc/header.php') ?>
@@ -29,41 +30,49 @@ $coverage = max(0, min(100, $coverage));
       <!-- Topbar -->
       <header class="bngrc-topbar">
         <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+          <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#mobileSidebar">
             <i class="bi bi-list"></i>
           </button>
 
           <div class="me-auto">
             <div class="fw-semibold">Simulation de dispatch</div>
+
             <div class="text-secondary small">
-              Répartition automatique des dons vers les besoins (FIFO). Aucune écriture BD en simulation.
+              Répartition automatique des dons vers les besoins.
             </div>
           </div>
 
           <div class="d-flex gap-2">
             <form method="post" action="/dispatch/simulate" class="d-inline">
+              <select name="mode_dispatch" id="">
+                <option value="1">FIFO</option>
+                <option value="2">Croissant</option>
+
+              </select>
               <button class="btn btn-sm btn-primary" type="submit">
                 <i class="bi bi-play-fill me-1"></i> Simuler
               </button>
             </form>
 
             <form method="post" action="/dispatch/validate" class="d-inline">
-              <button class="btn btn-sm btn-success" type="submit" <?php if (empty($allocations)) echo "disabled" ?>>
-                <i class="bi bi-check2-circle me-1"></i> Valider
-              </button>
-            </form>
+              <button class="btn btn-sm btn-success" type="submit" <?php if (empty($allocations))
+                echo "disabled" ?>>
+                  <i class="bi bi-check2-circle me-1"></i> Valider
+                </button>
+              </form>
 
 
-            <form method="post" action="/dispatch/reset" class="d-inline">
-              <button class="btn btn-sm btn-outline-danger" type="submit">
-                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
-              </button>
-            </form>
+              <form method="post" action="/dispatch/reset" class="d-inline">
+                <button class="btn btn-sm btn-outline-danger" type="submit">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main class="bngrc-content">
+        <main class="bngrc-content">
 
         <?php if (empty($allocations)): ?>
           <div class="alert alert-light border d-flex align-items-start gap-2">
@@ -82,7 +91,7 @@ $coverage = max(0, min(100, $coverage));
               <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                   <div class="text-secondary small">Dons disponibles</div>
-                  <div class="fs-3 fw-semibold"><?= (int)($stats['nb_dons'] ?? count($dons)) ?></div>
+                  <div class="fs-3 fw-semibold"><?= (int) ($stats['nb_dons'] ?? count($dons)) ?></div>
                   <div class="text-secondary small">FIFO par date</div>
                 </div>
                 <div class="bngrc-kpiicon"><i class="bi bi-inbox"></i></div>
@@ -95,7 +104,7 @@ $coverage = max(0, min(100, $coverage));
               <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                   <div class="text-secondary small">Besoins ouverts</div>
-                  <div class="fs-3 fw-semibold"><?= (int)($stats['nb_besoins'] ?? count($besoins)) ?></div>
+                  <div class="fs-3 fw-semibold"><?= (int) ($stats['nb_besoins'] ?? count($besoins)) ?></div>
                   <div class="text-secondary small">FIFO par saisie</div>
                 </div>
                 <div class="bngrc-kpiicon"><i class="bi bi-clipboard2-check"></i></div>
@@ -114,8 +123,9 @@ $coverage = max(0, min(100, $coverage));
                   <div class="bngrc-kpiicon"><i class="bi bi-graph-up-arrow"></i></div>
                 </div>
                 <div class="mt-3">
-                  <div class="progress bngrc-progress" role="progressbar" aria-valuenow="<?= (int)$coverage ?>" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: <?= (int)$coverage ?>%"></div>
+                  <div class="progress bngrc-progress" role="progressbar" aria-valuenow="<?= (int) $coverage ?>"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: <?= (int) $coverage ?>%"></div>
                   </div>
                   <div class="d-flex justify-content-between text-secondary small mt-1">
                     <span>0%</span><span>100%</span>
@@ -137,12 +147,8 @@ $coverage = max(0, min(100, $coverage));
                   <div class="fw-semibold"><i class="bi bi-inbox me-1"></i> Dons à traiter</div>
                   <div class="d-flex align-items-center gap-2">
                     <span class="badge bngrc-pill">FIFO</span>
-                    <button
-                      class="btn btn-sm btn-outline-secondary collapsed dispatch-accordion-btn"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#dispatchDonsCollapse"
-                      aria-expanded="false"
+                    <button class="btn btn-sm btn-outline-secondary collapsed dispatch-accordion-btn" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#dispatchDonsCollapse" aria-expanded="false"
                       aria-controls="dispatchDonsCollapse">
                       <i class="bi bi-chevron-down me-1"></i>
                       <span data-dispatch-btn-label>Afficher</span>
@@ -168,12 +174,13 @@ $coverage = max(0, min(100, $coverage));
                         <?php foreach ($dons as $d): ?>
                           <tr>
                             <td class="ps-3">
-                              <div class="fw-semibold">DON-<?= str_pad((string)$d['id_don'], 4, '0', STR_PAD_LEFT) ?></div>
+                              <div class="fw-semibold">DON-<?= str_pad((string) $d['id_don'], 4, '0', STR_PAD_LEFT) ?>
+                              </div>
                               <div class="text-secondary small"><?= e($d['source'] ?? '—') ?></div>
                             </td>
                             <td>
                               <span class="badge bngrc-tag bngrc-tag-nature me-2">Article</span>
-                              <?= e($d['article_name'] ?? ('ID #' . (int)$d['id_article'])) ?>
+                              <?= e($d['article_name'] ?? ('ID #' . (int) $d['id_article'])) ?>
                             </td>
                             <td class="text-end fw-semibold"><?= nf($d['quantite']) ?></td>
                             <td class="text-secondary"><?= e($d['date_don']) ?></td>
@@ -210,12 +217,8 @@ $coverage = max(0, min(100, $coverage));
                   <div class="fw-semibold"><i class="bi bi-list-check me-1"></i> Besoins à couvrir</div>
                   <div class="d-flex align-items-center gap-2">
                     <span class="badge bngrc-pill">FIFO</span>
-                    <button
-                      class="btn btn-sm btn-outline-secondary collapsed dispatch-accordion-btn"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#dispatchBesoinsCollapse"
-                      aria-expanded="false"
+                    <button class="btn btn-sm btn-outline-secondary collapsed dispatch-accordion-btn" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#dispatchBesoinsCollapse" aria-expanded="false"
                       aria-controls="dispatchBesoinsCollapse">
                       <i class="bi bi-chevron-down me-1"></i>
                       <span data-dispatch-btn-label>Afficher</span>
@@ -240,12 +243,13 @@ $coverage = max(0, min(100, $coverage));
                         <?php foreach ($besoins as $b): ?>
                           <tr>
                             <td class="ps-3">
-                              <div class="fw-semibold"><?= e($b['ville_name'] ?? ('Ville #' . (int)$b['id_ville'])) ?></div>
-                              <div class="text-secondary small">Besoin #<?= (int)$b['id_besoin'] ?></div>
+                              <div class="fw-semibold"><?= e($b['ville_name'] ?? ('Ville #' . (int) $b['id_ville'])) ?>
+                              </div>
+                              <div class="text-secondary small">Besoin #<?= (int) $b['id_besoin'] ?></div>
                             </td>
                             <td>
                               <span class="badge bngrc-tag bngrc-tag-mat me-2">Article</span>
-                              <?= e($b['article_name'] ?? ('ID #' . (int)$b['id_article'])) ?>
+                              <?= e($b['article_name'] ?? ('ID #' . (int) $b['id_article'])) ?>
                             </td>
                             <td class="text-end fw-semibold"><?= nf($b['quantite']) ?></td>
                             <td class="text-secondary pe-3"><?= e($b['date_saisie']) ?></td>
@@ -264,7 +268,8 @@ $coverage = max(0, min(100, $coverage));
 
                 <div class="card-footer bngrc-cardfoot">
                   <div class="text-secondary small">
-                    <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_saisie</strong> puis <strong>id_besoin</strong>.
+                    <i class="bi bi-info-circle me-1"></i> Tri: <strong>date_saisie</strong> puis
+                    <strong>id_besoin</strong>.
                   </div>
                 </div>
               </div>
@@ -282,8 +287,10 @@ $coverage = max(0, min(100, $coverage));
                 <div class="text-secondary small">Chaque ligne = attribution (don → besoin → ville → quantité).</div>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-outline-secondary" type="button" disabled><i class="bi bi-filetype-csv me-1"></i> CSV</button>
-                <button class="btn btn-sm btn-outline-secondary" type="button" disabled><i class="bi bi-printer me-1"></i> Print</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" disabled><i
+                    class="bi bi-filetype-csv me-1"></i> CSV</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" disabled><i
+                    class="bi bi-printer me-1"></i> Print</button>
               </div>
             </div>
           </div>
@@ -305,10 +312,11 @@ $coverage = max(0, min(100, $coverage));
                 <tbody>
                   <?php foreach ($allocations as $a): ?>
                     <tr>
-                      <td class="ps-3 fw-semibold">DON-<?= str_pad((string)$a['id_don'], 4, '0', STR_PAD_LEFT) ?></td>
-                      <td class="fw-semibold">BES-<?= str_pad((string)$a['besoin']['id_besoin'], 4, '0', STR_PAD_LEFT) ?></td>
-                      <td><?= e($a['ville_name'] ?? ('Ville #' . (int)$a['id_ville'])) ?></td>
-                      <td class="fw-semibold"><?= (string)$a['besoin']['article_name'] ?></td>
+                      <td class="ps-3 fw-semibold">DON-<?= str_pad((string) $a['id_don'], 4, '0', STR_PAD_LEFT) ?></td>
+                      <td class="fw-semibold">BES-<?= str_pad((string) $a['besoin']['id_besoin'], 4, '0', STR_PAD_LEFT) ?>
+                      </td>
+                      <td><?= e($a['ville_name'] ?? ('Ville #' . (int) $a['id_ville'])) ?></td>
+                      <td class="fw-semibold"><?= (string) $a['besoin']['article_name'] ?></td>
                       <td class="text-end fw-semibold"><?= nf($a['attribue']) ?></td>
                       <td class="text-end"><span class="badge bngrc-pill"><?= nf($a['reste_don']) ?></span></td>
                       <td class="pe-3"><span class="badge bngrc-pill"><?= nf($a['reste_besoin']) ?></span></td>
@@ -356,25 +364,28 @@ $coverage = max(0, min(100, $coverage));
           <button class="btn btn-primary w-100" type="submit"><i class="bi bi-play-fill me-1"></i> Simuler</button>
         </form>
         <form method="post" action="/dispatch/validate">
-          <button class="btn btn-success w-100" type="submit" <?php if (empty($allocations)) echo "disabled" ?>><i class="bi bi-check2-circle me-1"></i> Valider</button>
-        </form>
-        <form method="post" action="/dispatch/reset">
-          <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset</button>
-        </form>
+          <button class="btn btn-success w-100" type="submit" <?php if (empty($allocations))
+            echo "disabled" ?>><i
+                class="bi bi-check2-circle me-1"></i> Valider</button>
+          </form>
+          <form method="post" action="/dispatch/reset">
+            <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-arrow-counterclockwise me-1"></i>
+              Reset</button>
+          </form>
+        </div>
+
+        <nav class="bngrc-nav">
+          <a class="bngrc-navlink" href="/dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+          <a class="bngrc-navlink" href="/dons"><i class="bi bi-inbox"></i><span>Collectes</span></a>
+          <a class="bngrc-navlink active" href="/dispatch"><i class="bi bi-diagram-3"></i><span>Dispatch</span></a>
+          <a class="bngrc-navlink" href="/besoins"><i class="bi bi-truck"></i><span>Besoins</span></a>
+          <a class="bngrc-navlink" href="/villes"><i class="bi bi-geo-alt"></i><span>Villes</span></a>
+        </nav>
       </div>
-
-      <nav class="bngrc-nav">
-        <a class="bngrc-navlink" href="/dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-        <a class="bngrc-navlink" href="/dons"><i class="bi bi-inbox"></i><span>Collectes</span></a>
-        <a class="bngrc-navlink active" href="/dispatch"><i class="bi bi-diagram-3"></i><span>Dispatch</span></a>
-        <a class="bngrc-navlink" href="/besoins"><i class="bi bi-truck"></i><span>Besoins</span></a>
-        <a class="bngrc-navlink" href="/villes"><i class="bi bi-geo-alt"></i><span>Villes</span></a>
-      </nav>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/assets/js/dispatch.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/dispatch.js"></script>
+  </body>
 
-</html>
+  </html>

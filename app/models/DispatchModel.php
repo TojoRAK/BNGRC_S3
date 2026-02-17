@@ -231,7 +231,7 @@ class DispatchModel
                 // ligne utilse et afficher
                 $allocations[] = [
                     'id_don' => $idDon,
-                    'id_besoin' => $idBesoin,
+                    'besoin' => $besoin,
                     'id_ville' => (int) $besoin['id_ville'],
                     'ville_name' => $besoin['ville_name'] ?? null,
                     'id_article' => $idArticle,

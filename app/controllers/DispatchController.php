@@ -43,7 +43,35 @@ class DispatchController
 
     public function simulate()
     {
-        $data = $this->model->simulateDispatchCroissants();
+        $mode = isset($_POST['mode_dispatch']) ? trim((string) $_POST['mode_dispatch']) : '1';
+
+        if ($mode === '2') {
+            $data = $this->model->simulateDispatchCroissants();
+        } else {
+            $data = $this->model->simulateDispatch();
+        }
+
+        // Sécurité: si jamais un mode non prévu renvoie un tableau vide
+        if (empty($data) || !isset($data['dons'], $data['besoins'])) {
+            $dons = $this->model->getDonDisponible();
+            $besoins = $this->model->getBesoinOuvert();
+            $data = [
+                'dons' => $dons,
+                'besoins' => $besoins,
+                'allocations' => [],
+                'donRemaining' => [],
+                'besoinRemaining' => [],
+                'stats' => [
+                    'nb_dons' => count($dons),
+                    'nb_besoins' => count($besoins),
+                    'nb_allocations' => 0,
+                    'total_don' => 0,
+                    'total_besoin' => 0,
+                    'total_attribue' => 0,
+                    'coverage_percent' => 0,
+                ],
+            ];
+        }
         Flight::render('dispatch', $data);
 
         exit;
@@ -56,7 +84,7 @@ class DispatchController
 
             $result = $this->model->validateSimulation($simulation);
 
-            
+
 
         } catch (\Throwable $e) {
 
