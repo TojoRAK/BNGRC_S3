@@ -60,6 +60,7 @@ $coverage = max(0, min(100, $coverage));
             <form method="post" action="/dispatch/validate" class="d-inline">
               <button class="btn btn-sm btn-success" type="submit" <?php if (empty($allocations))
                 echo "disabled" ?>>
+                <input type="hidden" name="mode_used" value="<?= $mode_used ?? '0'?>">
                   <i class="bi bi-check2-circle me-1"></i> Valider
                 </button>
               </form>

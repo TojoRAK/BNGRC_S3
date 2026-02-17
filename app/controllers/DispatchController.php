@@ -47,9 +47,9 @@ class DispatchController
 
         if ($mode === '2') {
             $data = $this->model->simulateDispatch("BESOIN_CROISSANT");
-        } elseif ($mode==='1') {
+        } elseif ($mode === '1') {
             $data = $this->model->simulateDispatch();
-        }elseif($mode ==='3'){
+        } elseif ($mode === '3') {
             $data = $this->model->simulateDispatch('PRORATA');
         }
 
@@ -71,6 +71,7 @@ class DispatchController
                     'total_attribue' => 0,
                     'coverage_percent' => 0,
                 ],
+                'mode_used' => $mode
             ];
         }
         Flight::render('dispatch', $data);
@@ -82,6 +83,15 @@ class DispatchController
     {
         try {
             $simulation = $this->model->simulateDispatch();
+            $mode = isset($_POST['mode_used']) ? trim((string) $_POST['mode_used']) : '1';
+
+            if ($mode === '2') {
+                $simulation = $this->model->simulateDispatch("BESOIN_CROISSANT");
+            } elseif ($mode === '1') {
+                $simulation = $this->model->simulateDispatch();
+            } elseif ($mode === '3') {
+                $simulation = $this->model->simulateDispatch('PRORATA');
+            }
 
             $result = $this->model->validateSimulation($simulation);
 
@@ -89,7 +99,7 @@ class DispatchController
 
         } catch (\Throwable $e) {
 
-            Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
+            // Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
         }
 
         Flight::redirect('/dispatch');

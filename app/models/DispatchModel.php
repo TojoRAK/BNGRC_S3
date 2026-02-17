@@ -422,7 +422,7 @@ class DispatchModel
             foreach ($allocations as $a) {
                 $stmtInsert->execute([
                     $a['id_don'],
-                    $a['id_besoin'],
+                    $a['besoin']['id_besoin'],
                     $a['id_ville'],
                     $a['attribue'],
                 ]);
