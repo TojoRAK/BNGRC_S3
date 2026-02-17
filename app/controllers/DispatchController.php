@@ -22,6 +22,7 @@ class DispatchController
         $besoins = $this->model->getBesoinOuvert();
 
         $data = [
+            'mode_used' => '1',
             'dons' => $dons,
             'besoins' => $besoins,
             'allocations' => [],
@@ -46,6 +47,9 @@ class DispatchController
     {
         $mode = isset($_POST['mode_dispatch']) ? trim((string) $_POST['mode_dispatch']) : '1';
 
+        // Default to FIFO if mode is unknown
+        $data = $this->model->simulateDispatch();
+
         if ($mode === '2') {
             $data = $this->model->simulateDispatch("BESOIN_CROISSANT");
         } elseif ($mode === '1') {
@@ -54,10 +58,15 @@ class DispatchController
             $data = $this->model->simulateDispatch('PRORATA');
         }
 
+        if (is_array($data)) {
+            $data['mode_used'] = $mode;
+        }
+
         if (empty($data) || !isset($data['dons'], $data['besoins'])) {
             $dons = $this->model->getDonDisponible();
             $besoins = $this->model->getBesoinOuvert();
             $data = [
+                'modeUsed' => $mode,
                 'dons' => $dons,
                 'besoins' => $besoins,
                 'allocations' => [],
@@ -71,8 +80,7 @@ class DispatchController
                     'total_besoin' => 0,
                     'total_attribue' => 0,
                     'coverage_percent' => 0,
-                ],
-                'mode_used' => $mode
+                ]
             ];
         }
         Flight::render('dispatch', $data);
@@ -83,8 +91,9 @@ class DispatchController
     public function validate()
     {
         try {
-            $simulation = $this->model->simulateDispatch();
             $mode = isset($_POST['mode_used']) ? trim((string) $_POST['mode_used']) : '1';
+
+            $simulation = $this->model->simulateDispatch();
 
             if ($mode === '2') {
                 $simulation = $this->model->simulateDispatch("BESOIN_CROISSANT");
@@ -99,11 +108,11 @@ class DispatchController
 
 
         } catch (\Throwable $e) {
-
+            echo $e->getMessage();
             // Flight::flash('error', "Erreur lors de la validation du dispatch : " . $e->getMessage());
         }
 
-        Flight::redirect('/dispatch');
+        // Flight::redirect('/dispatch');
         exit;
     }
 

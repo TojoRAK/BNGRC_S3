@@ -402,7 +402,7 @@ class DispatchModel
 
         foreach ($allocations as $a) {
             $idDon = (int) ($a['id_don'] ?? 0);
-            $idBesoin = (int) ($a['id_besoin'] ?? 0);
+            $idBesoin = (int) ($a['besoin']['id_besoin'] ?? 0);
             $qty = (float) ($a['attribue'] ?? 0);
 
             $sumByDon[$idDon]       = ($sumByDon[$idDon]       ?? 0) + $qty;
