@@ -23,12 +23,21 @@ class AchatModel
     public function getTotalArgentDons(): float
     {
         $stmt = $this->db->query("
-            SELECT COALESCE(SUM(d.quantite),0) 
-            FROM don d 
-            JOIN article art ON art.id_article=d.id_article 
-            WHERE art.pu = 1
-        ");
-        return (float)$stmt->fetchColumn();
+        SELECT 
+            COALESCE(SUM(d.quantite), 0) 
+            - COALESCE((
+                SELECT SUM(dp.quantite_attribuee)
+                FROM dispatch dp
+                JOIN don dn ON dp.id_don = dn.id_don
+                JOIN article art2 ON art2.id_article = dn.id_article
+                WHERE art2.pu = 1
+                  AND dp.id_don IS NOT NULL
+            ), 0)
+        FROM don d
+        JOIN article art ON art.id_article = d.id_article
+        WHERE art.pu = 1
+    ");
+        return max(0.0, (float)$stmt->fetchColumn());
     }
 
     public function getVilles(): array
@@ -81,12 +90,19 @@ class AchatModel
     public function getArgentDonsFIFO(): array
     {
         return $this->db->query("
-            SELECT d.*
-            FROM don d
-            JOIN article art ON art.id_article = d.id_article
-            WHERE art.pu = 1
-            ORDER BY d.date_don, d.id_don
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        SELECT 
+            d.*,
+            d.quantite - COALESCE((
+                SELECT SUM(dp.quantite_attribuee)
+                FROM dispatch dp
+                WHERE dp.id_don = d.id_don
+            ), 0) AS quantite_disponible
+        FROM don d
+        JOIN article art ON art.id_article = d.id_article
+        WHERE art.pu = 1
+          AND d.statut != 'DISPATCHE'
+        ORDER BY d.date_don, d.id_don
+    ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAchatsHistorique(): array

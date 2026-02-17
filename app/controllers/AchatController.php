@@ -70,7 +70,7 @@ class AchatController
 
             foreach ($dons as $don) {
                 if ($remaining <= 0) break;
-                $available = $don['quantite'];
+                $available = $don['quantite_disponible'];
                 if ($available <= 0) continue;
                 $used = min($available, $remaining);
                 $paiements[] = ['id_don' => $don['id_don'], 'montant' => $used];
