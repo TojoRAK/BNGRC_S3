@@ -95,6 +95,11 @@ $router->group('', function (Router $router) {
         (new DispatchController())->validate();
     });
 
+	$router->post('/dispatch/validateAchat', function () {
+        requireAuth(['ADMIN']);
+        (new DispatchController())->validateAchat();
+    });
+
     // ACHATS: Admin only
     $router->get('/achats', function () {
         requireAuth(['ADMIN']);
