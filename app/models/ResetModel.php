@@ -202,7 +202,7 @@ class ResetModel
                 $stmtDon->execute([$art, $qte, $qte, $date, 'Donateur']);
             }
 
-            $this->pdo->commit();
+            // $this->pdo->commit();
 
             return ['ok' => true, 'message' => 'Seed complet OK'];
         } catch (\Throwable $e) {
